@@ -99,6 +99,72 @@ function applyPhysics() {
   }
 }
 
+// Animate glowing edges between semantically close nodes (same type)
+function drawEdges(time) {
+  for(let i=0;i<nodes.length;i++){
+    for(let j=i+1;j<nodes.length;j++){
+      let n1 = nodes[i], n2 = nodes[j];
+      if(n1.type === n2.type) {
+        let dist = Math.hypot(n1.x-n2.x, n1.y-n2.y);
+        if(dist < 250) { // Only show edges within 250px
+          ctx.save();
+          // Breathing glow: animate edge color hue
+          const hue = (time/10 + i*30)%360;
+          ctx.strokeStyle = `hsl(${n1.selected || n2.selected ? 300 : hue}, 100%, 60%)`;
+          ctx.globalAlpha = 0.14 + 0.12*Math.sin(time/250 + i+j);
+          ctx.lineWidth = (n1.selected||n2.selected)?3.8:2.0;
+          ctx.shadowColor = ctx.strokeStyle;
+          ctx.shadowBlur = (n1.selected || n2.selected)?16:6;
+          ctx.beginPath();
+          ctx.moveTo(n1.x, n1.y);
+          ctx.lineTo(n2.x, n2.y);
+          ctx.stroke();
+          ctx.restore();
+        }
+      }
+    }
+  }
+}
+
+// Info Panel state
+let infoPanelNode = null;
+
+canvas.addEventListener('click', e => {
+  const rect = canvas.getBoundingClientRect();
+  for (let node of nodes) {
+    let dx = e.clientX - rect.left - node.x;
+    let dy = e.clientY - rect.top - node.y;
+    if (Math.sqrt(dx * dx + dy * dy) < node.r) {
+      infoPanelNode = node;
+      return;
+    }
+  }
+  infoPanelNode = null; // Clicked outside
+});
+
+// Sidebar info panel layout
+function drawInfoPanel() {
+  if(!infoPanelNode) return;
+  const panelWidth = canvas.width * 0.32;
+  ctx.save();
+  ctx.globalAlpha = 0.96;
+  ctx.fillStyle = '#18192c';
+  ctx.fillRect(canvas.width - panelWidth, 0, panelWidth, canvas.height);
+  // Title
+  ctx.font = 'bold 26px Segoe UI';
+  ctx.fillStyle = '#00f9ff';
+  ctx.textAlign = 'left';
+  ctx.fillText(infoPanelNode.title, canvas.width - panelWidth + 36, 68);
+  // Placeholder for further styled content
+  ctx.font = '17px Segoe UI';
+  ctx.fillStyle = '#c1ccdc';
+  ctx.fillText('Summary:', canvas.width - panelWidth + 36, 120);
+  ctx.fillStyle = '#e2e9f7';
+  ctx.font = '16px Segoe UI';
+  ctx.fillText(infoPanelNode.summary, canvas.width - panelWidth + 36, 148, panelWidth-64);
+  ctx.restore();
+}
+
 function drawNodes() {
   for (let node of nodes) {
     ctx.save();
@@ -128,10 +194,12 @@ function drawNodes() {
   }
 }
 
-function animate() {
+function animate(time=0) {
   drawBackground();
+  drawEdges(time||0);
   applyPhysics();
   drawNodes();
+  drawInfoPanel();
   requestAnimationFrame(animate);
 }
 
