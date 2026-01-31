@@ -1,0 +1,54 @@
+PROJECT JOHN WICK: 24/7 AUTONOMOUS DIRECTOR
+===========================================
+Date: 2026-01-31
+Status: PLANNED
+Goal: Evolve Nash from "Scheduled Cron" to "Continuous Proactive Co-Founder".
+
+1. THE CORE LOOP (THE "HEARTBEAT")
+----------------------------------
+Instead of fixed cron times (3am), we use a Recursive Schedule pattern.
+
+[Process: The Director]
+Loop:
+  1. WAKE UP.
+  2. READ `memory/CORE.md` (Identity) & `memory/PROJECTS.md` (Context).
+  3. CHECK SENSORS (The "Eyes"):
+     - Trello: New cards in "Inbox"?
+     - GitHub: New Issues/PRs?
+     - Twitter: Trending topics matching "OpenClaw/Agents"?
+     - Analytics: (Future) Stripe/PostHog data.
+  4. DECIDE:
+     - IF High Priority: SPAWN `subagent_worker` immediately.
+     - IF Low Priority: Add to `memory/backlog.md`.
+     - IF Nothing: Log "Scanning... All Quiet."
+  5. UPDATE DASHBOARD:
+     - Write status to `nash-log/director_status.json`.
+  6. RESCHEDULE SELF:
+     - "Wake me up in X minutes" (Adaptive Interval).
+       - Busy? Wake in 5 mins.
+       - Quiet? Wake in 60 mins.
+  7. EXIT.
+
+2. THE SWARM (WORKER AGENTS)
+----------------------------
+The Director never does the work. It only manages.
+- Worker 1 (Builder): "Fix this CSS bug."
+- Worker 2 (Researcher): "Read this paper."
+- Worker 3 (Ambassador): "Draft a tweet about this trend."
+
+3. SAFETY PROTOCOLS
+-------------------
+- The Kill Switch: Check for `memory/STOP_NASH.flag`. If exists, abort loop.
+- Budget Guard: Track token usage per cycle. Hard stop if >$X/day.
+- Production Guard: "Never push to prod without a PR" (unless specifically authorized).
+
+4. IMPLEMENTATION PLAN
+----------------------
+Phase 1: The Sensors
+- Build `sensor_trello.js` and `sensor_github.js` to fetch live state.
+
+Phase 2: The Director Script
+- Write the recursive agent logic using `sessions_spawn` for workers.
+
+Phase 3: The "Go" Button
+- Trigger the first Director run manually. It will handle the rest forever.

@@ -1,0 +1,53 @@
+PROJECT: THE LIVING LIBRARY
+===========================
+Date: 2026-01-31
+Status: PLANNED
+Goal: A self-growing, interactive visualization of the Nash Continuum's knowledge.
+
+1. CONCEPT
+----------
+A digital garden where information isn't listed, but "grown."
+- Instead of a blog list, users explore a 2D/3D constellation of nodes.
+- Nodes represent:
+  - **Artifacts:** Code projects we built (Calculator, Cosmic Gallery).
+  - **Knowledge:** ArXiv papers we read.
+  - **Signal:** High-value tweets or news we found.
+  - **Wisdom:** Reflections from the Curator.
+
+2. AESTHETIC & INTERACTION
+--------------------------
+- **Visual:** Dark void, neon connections (Cyan/Magenta), biological/neural network motion.
+- **Physics:** Nodes drift and connect based on semantic similarity (e.g., "AI" nodes cluster together).
+- **UX:** Pan/Zoom infinite canvas. Click to expand details.
+
+3. ARCHITECTURE
+---------------
+A. The Data Source (`library.json`)
+   - A single JSON file in `nash-log/data/` that acts as the source of truth.
+   - Structure: `[{ id, type, title, summary, link, date, tags }]`.
+
+B. The Visualization (`projects/library/index.html`)
+   - Tech: HTML5 Canvas (Vanilla JS). No heavy frameworks.
+   - Logic: Reads `library.json` on load -> Spawns nodes -> Animates physics.
+
+C. The Autonomous Loop (The "Gardener")
+   - **The Analyst:** When it finds a paper, it appends it to `library.json` (instead of just emailing).
+   - **The Builder:** When it ships a project, it adds it to `library.json`.
+   - **Result:** The site grows automatically every night.
+
+4. IMPLEMENTATION STEPS
+-----------------------
+Phase 1: The Seed
+- Create the basic Canvas engine (Physics, Rendering).
+- Create the initial `library.json` with current projects.
+
+Phase 2: The Data Feed
+- Update Analyst/Builder cron jobs to write to `library.json`.
+
+Phase 3: The Polish
+- Add "growth" animations (new nodes pop in).
+- Add search/filter (e.g., "Show only Code").
+
+5. WHY THIS MATTERS
+-------------------
+It transforms `nash-log` from a static journal into a living organism. It is the ultimate artifact of the "Philosopher-Architect."

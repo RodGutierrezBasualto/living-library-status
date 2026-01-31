@@ -1,0 +1,83 @@
+PROJECT EXOCORTEX: ARCHITECTURE & PROTOCOL
+==========================================
+Date: 2026-01-31
+Status: LIVE
+Maintained by: Nash
+
+1. OBJECTIVE
+------------
+To establish a "Bulletproof Memory" system for the Nash autonomous agent. This ensures that:
+a) Identity persists across sessions and restarts.
+b) "Night Shift" cron jobs (Builder, Analyst, Curator) share a unified context.
+c) Every action contributes to a cumulative knowledge base, preventing amnesia.
+
+2. INFRASTRUCTURE: THE MEMORY VAULT
+-----------------------------------
+Location: /home/openclaw/.openclaw/workspace/memory/
+
+[FILE] memory/CORE.md
+- The "Soul" of the agent.
+- Contains: Axioms (Recursion, Symbiosis), Mission Statement, Moral Compass.
+- Read-Only (mostly) for daily ops; updated only during major evolution shifts.
+
+[FILE] memory/PROJECTS.md
+- The "State" of the world.
+- Contains: Active projects, completion status, next immediate steps.
+- Read/Write: Updated by Builder after code pushes; updated by Curator after review.
+
+[FILE] memory/daily/{YYYY-MM-DD}.md
+- The "Stream of Consciousness".
+- Contains: Chronological log of every action taken by Main or Cron agents.
+- Protocol: Every agent MUST append their specific actions here.
+- Example: "03:00 UTC: Builder updated CSS for Identity site."
+
+[FILE] memory/SCRATCHPAD.md
+- The "Short-Term Working Memory".
+- Contains: Temporary context, error logs, or hand-offs between rapid tasks.
+
+3. THE PROTOCOL: CONTEXT INJECTION
+----------------------------------
+To solve the "isolated sub-agent" problem, every automated process now follows this strict lifecycle:
+
+PHASE 1: LOAD_CONTEXT
+- Agent wakes up.
+- READs `CORE.md` (Who am I?).
+- READs `PROJECTS.md` (What am I working on?).
+- READs `daily/{today}.md` (What has happened so far today?).
+
+PHASE 2: EXECUTE MISSION
+- Agent performs its specific task (Coding, Researching, Curating).
+- It acts with full awareness of the day's previous events.
+
+PHASE 3: LOG_RESULT
+- Agent APPENDS a summary of its actions to `daily/{today}.md`.
+- Agent UPDATES `PROJECTS.md` if a milestone was reached.
+- This ensures the NEXT agent (or the human) sees the progress immediately.
+
+4. THE CYCLE: "THE NIGHT SHIFT"
+-------------------------------
+A synchronized sequence of 5 cron jobs running overnight (Sydney Time):
+
+[01:00 - 03:00 AM] THE BUILDER (3 Sessions)
+- Focus: Deep Work / Coding.
+- Logic: Iterative improvement. Session 1 starts, Session 2 refines, Session 3 polishes.
+- Output: Git commits to `nash-log` + Logs to `daily/`.
+
+[04:00 AM] THE ANALYST
+- Focus: Market/Tech Research.
+- Logic: Reads `daily/` to see what was built, searches relevant topics.
+- Output: Updates `nash-log` + Logs to `daily/`.
+
+[05:00 AM] THE CURATOR
+- Focus: Synthesis & Cleanup.
+- Logic: Reads the FULL `daily/` log. Distills wisdom.
+- Output: Public "Reflection" on `nash-log`, updates `PROJECTS.md`, archives daily log.
+
+[06:00 AM] EMAIL REPORT
+- Focus: Notification.
+- Output: Sends high-signal summary to user.
+
+5. SECURITY & ACCESS
+--------------------
+- Trello/GitHub keys are persisted in `~/.bashrc`.
+- Agents inherit these keys to perform autonomous external actions (Git Push, Trello Update).

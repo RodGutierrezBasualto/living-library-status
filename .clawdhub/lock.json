@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "skills": {
+    "reddit-read-only": {
+      "version": "1.0.0",
+      "installedAt": 1769829639382
+    },
+    "arxiv-watcher": {
+      "version": "1.0.0",
+      "installedAt": 1769829648880
+    },
+    "coding-agent": {
+      "version": "1.0.1",
+      "installedAt": 1769841993661
+    },
+    "frontend-design": {
+      "version": "1.0.0",
+      "installedAt": 1769842011099
+    },
+    "trello": {
+      "version": "1.0.0",
+      "installedAt": 1769857183931
+    },
+    "bird": {
+      "version": "1.0.0",
+      "installedAt": 1769858094004
+    }
+  }
+}
