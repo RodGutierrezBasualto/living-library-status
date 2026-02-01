@@ -205,7 +205,28 @@ async function init() {
         document.getElementById('panel-title').innerText = d.label;
         document.getElementById('panel-type').innerText = d.type;
         document.getElementById('panel-desc').innerText = d.description || "No description available.";
-        document.getElementById('panel-id').innerText = `ID: ${d.id} | Deg: ${d.degree}`;
+        
+        // Extended Metadata
+        const metaContainer = document.querySelector('.panel-meta');
+        let metaHTML = `<small>ID: ${d.id} | Deg: ${d.degree}</small>`;
+        
+        if (d.status) {
+            metaHTML += `<br><small>Status: <span style="color:var(--accent)">${d.status.toUpperCase()}</span></small>`;
+        }
+        if (d.version) {
+            metaHTML += `<br><small>Version: ${d.version}</small>`;
+        }
+        if (d.tags) {
+            metaHTML += `<div style="margin-top:0.5rem; display:flex; gap:0.3rem; flex-wrap:wrap;">
+                ${d.tags.map(t => `<span style="background:#333; padding:2px 6px; border-radius:4px; font-size:0.7em;">#${t}</span>`).join('')}
+            </div>`;
+        }
+        if (d.url && d.url !== "#") {
+            metaHTML += `<div style="margin-top:1rem;"><a href="${d.url}" target="_blank" style="color:var(--accent); text-decoration:none; border-bottom:1px dotted;">External Link ↗</a></div>`;
+        }
+        metaContainer.innerHTML = metaHTML;
+
+        document.getElementById('panel-id').innerText = `ID: ${d.id} | Deg: ${d.degree}`; // Fallback if metaContainer fails
         document.getElementById('panel-type').style.color = getTypeColor(d.type);
         document.getElementById('panel-type').style.borderColor = getTypeColor(d.type);
 
@@ -257,11 +278,37 @@ async function init() {
     // Close panel on background click
     svg.on("click", () => panel.classList.add('hidden'));
 
-    // --- Interaction: Highlight ---
+    // --- Interaction: Highlight & Pathfinding ---
+    function findShortestPath(startId, endId) {
+        if (startId === endId) return [startId];
+        
+        const queue = [[startId]];
+        const visited = new Set([startId]);
+        
+        while (queue.length > 0) {
+            const path = queue.shift();
+            const node = path[path.length - 1];
+            
+            // Find neighbors
+            const neighbors = [];
+            links.forEach(l => {
+                if (l.source.id === node && !visited.has(l.target.id)) neighbors.push(l.target.id);
+                if (l.target.id === node && !visited.has(l.source.id)) neighbors.push(l.source.id);
+            });
+            
+            for (const neighbor of neighbors) {
+                if (neighbor === endId) return [...path, neighbor];
+                visited.add(neighbor);
+                queue.push([...path, neighbor]);
+            }
+        }
+        return null;
+    }
+
     function highlight(d, isActive) {
         if (!isActive) {
             node.attr("opacity", 1);
-            link.attr("stroke-opacity", 0.6);
+            link.attr("stroke", "#333").attr("stroke-width", 1.5).attr("stroke-opacity", 0.6);
             return;
         }
 
@@ -271,8 +318,32 @@ async function init() {
             if (l.target.id === d.id) connectedIds.add(l.source.id);
         });
 
-        node.attr("opacity", n => connectedIds.has(n.id) ? 1 : 0.1);
-        link.attr("stroke-opacity", l => (connectedIds.has(l.source.id) && connectedIds.has(l.target.id)) ? 1 : 0.05);
+        // Path to Core (ID 1)
+        const path = findShortestPath(d.id, "1");
+        const pathSet = new Set(path || []);
+
+        node.attr("opacity", n => {
+            if (n.id === d.id) return 1;
+            if (pathSet.has(n.id)) return 0.8; // Path nodes
+            if (connectedIds.has(n.id)) return 0.6; // Neighbors
+            return 0.1; // Others
+        });
+
+        link
+            .attr("stroke", l => {
+                const isPath = pathSet.has(l.source.id) && pathSet.has(l.target.id);
+                if (isPath) return "#fff"; // Path color
+                return "#333";
+            })
+            .attr("stroke-width", l => {
+                const isPath = pathSet.has(l.source.id) && pathSet.has(l.target.id);
+                return isPath ? 2.5 : 1.5;
+            })
+            .attr("stroke-opacity", l => {
+                const isPath = pathSet.has(l.source.id) && pathSet.has(l.target.id);
+                const isNeighbor = connectedIds.has(l.source.id) && connectedIds.has(l.target.id);
+                return (isPath || isNeighbor) ? 1 : 0.05;
+            });
     }
 
     // --- Feature: Search & Filter ---
@@ -298,33 +369,63 @@ async function init() {
     filterSelect.addEventListener('change', filterUpdate);
 
     // --- Feature: Simulate Growth ---
+    const latentConcepts = [
+        { label: "Systems Thinking", type: "field", description: "Holistic approach to analysis that focuses on the way that a system's constituent parts interrelate." },
+        { label: "Feedback Loops", type: "concept", description: "A situation where part of the output of a situation is used for new input." },
+        { label: "Resilience", type: "concept", description: "The capacity to recover quickly from difficulties; toughness." },
+        { label: "Entropy", type: "concept", description: "A thermodynamic quantity representing the unavailability of a system's thermal energy for conversion into mechanical work." },
+        { label: "Emergence", type: "concept", description: "Properties or behaviors which emerge only when the parts interact in a wider whole." },
+        { label: "Agentic Workflow", type: "process", description: "A method where AI agents plan and execute multi-step tasks autonomously." },
+        { label: "Knowledge Graph", type: "tool", description: "A knowledge base that uses a graph-structured data model." },
+        { label: "API", type: "tool", description: "Application Programming Interface." },
+        { label: "User Experience", type: "field", description: "How a person feels when interfacing with a system." }
+    ];
+
     function spawnNode() {
         if (nodes.length > 100) return; // Cap auto-growth
 
         const sourceNode = nodes[Math.floor(Math.random() * nodes.length)];
         const newId = Date.now().toString();
 
-        // Expanded vocabulary for procedural generation
-        const types = ['concept', 'entity', 'project', 'tool', 'field', 'process'];
-        const newType = types[Math.floor(Math.random() * types.length)];
+        let newNodeData;
         
-        const prefixes = ["Advanced", "Core", "Meta", "Sub", "Future", "Applied", "Neo", "Hyper", "Dynamic", "Strategic", "Recursive"];
-        const suffixes = ["Loop", "Module", "Layer", "Nexus", "Vector", "State", "Agent", "Protocol"];
-        
-        // 50% chance to use Source Node's label, 50% chance to generate a new abstract term
-        let label;
-        if (Math.random() > 0.5) {
-             label = `${prefix} ${sourceNode.label.split(" ").pop()}`;
+        // 40% chance to pick a "real" concept if available
+        if (Math.random() < 0.4 && latentConcepts.length > 0) {
+            const index = Math.floor(Math.random() * latentConcepts.length);
+            const concept = latentConcepts.splice(index, 1)[0];
+            newNodeData = {
+                ...concept,
+                id: newId,
+                description: concept.description + ` (Discovered via ${sourceNode.label})`
+            };
         } else {
-             const base = suffixes[Math.floor(Math.random() * suffixes.length)];
-             label = `${prefix} ${base}`;
+            // Procedural Generation
+            const types = ['concept', 'entity', 'project', 'tool', 'field', 'process'];
+            const newType = types[Math.floor(Math.random() * types.length)];
+            
+            const prefixes = ["Advanced", "Core", "Meta", "Sub", "Future", "Applied", "Neo", "Hyper", "Dynamic", "Strategic", "Recursive"];
+            const suffixes = ["Loop", "Module", "Layer", "Nexus", "Vector", "State", "Agent", "Protocol", "System", "Flow"];
+            
+            let label;
+            if (Math.random() > 0.5) {
+                // Variation of source
+                 label = `Sub-${sourceNode.label.split(" ").pop()}`;
+            } else {
+                 const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+                 const base = suffixes[Math.floor(Math.random() * suffixes.length)];
+                 label = `${prefix} ${base}`;
+            }
+            
+            newNodeData = {
+                id: newId,
+                label: label,
+                type: newType,
+                description: `Spontaneously emerged node. Connected to ${sourceNode.label}. Represents a new ${newType} vector in the system.`
+            };
         }
 
         const newNode = {
-            id: newId,
-            label: label,
-            type: newType,
-            description: `Spontaneously emerged node. Connected to ${sourceNode.label}. Represents a new ${newType} vector in the system.`,
+            ...newNodeData,
             x: sourceNode.x + (Math.random() - 0.5) * 50,
             y: sourceNode.y + (Math.random() - 0.5) * 50,
             degree: 1
@@ -339,7 +440,6 @@ async function init() {
         // 30% chance to add a second connection
         if (Math.random() > 0.7 && nodes.length > 2) {
             let otherNode = nodes[Math.floor(Math.random() * nodes.length)];
-            // Avoid self-loops and duplicate edges (basic check)
             let safeGuard = 0;
             while ((otherNode.id === newNode.id || otherNode.id === sourceNode.id) && safeGuard < 10) {
                 otherNode = nodes[Math.floor(Math.random() * nodes.length)];
@@ -352,8 +452,6 @@ async function init() {
 
         restart();
         filterUpdate(); 
-        
-        // Flash message or visual cue could go here
     }
 
     growthBtn.addEventListener('click', spawnNode);

@@ -30,4 +30,9 @@
     - **Mobile:** Fixed touch scrolling interference by adding `touch-action: none` to the graph container.
     - **Simulation:** Implemented "Auto-Growth" (background tick) to simulate life; improved procedural naming (prefixes/suffixes) for new nodes.
     - **Info Panel:** Enhanced details (ID, Degree) and navigation (clickable spans).
-
+- 2026-02-01 10:45 UTC: [SPRINT 2.2 REFINEMENT]
+    - **Data Intelligence:** Implemented "Latent Concepts" logic. "Simulate Growth" now discovers predefined semantic nodes (e.g., "Systems Thinking", "Entropy") before falling back to procedural generation.
+    - **Systems Thinking UI:** Added "Path to Core" visualization. When a node is highlighted, the shortest path to "Nash Equilibrium" (ID 1) is visually traced in white.
+    - **Rich Metadata:** Info Panel now displays Tags, Status, Version, and External Links if present in `library.json`.
+    - **Mobile Polish:** Added a visual "drag handle" to the bottom sheet and increased max-height for better readability on phones.
+    - **Data:** Updated `library.json` with metadata examples (tags, urls).

@@ -305,16 +305,27 @@ h1 {
         right: 0;
         left: 0;
         width: auto;
-        max-height: 65vh;
+        max-height: 70vh;
         overflow-y: auto;
         border-radius: 16px 16px 0 0;
         border-bottom: none;
         border-left: none;
         border-right: none;
-        box-shadow: 0 -4px 20px rgba(0,0,0,0.6);
+        box-shadow: 0 -4px 30px rgba(0,0,0,0.8);
         transform: translateY(0);
         z-index: 200;
-        padding-bottom: 2rem; /* Safe area */
+        padding-bottom: 2rem;
+    }
+    
+    /* Drag Handle Visual */
+    #info-panel::before {
+        content: '';
+        display: block;
+        width: 40px;
+        height: 4px;
+        background: #444;
+        margin: -0.5rem auto 1rem auto;
+        border-radius: 2px;
     }
     
     #info-panel.hidden {
