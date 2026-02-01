@@ -1,25 +1,25 @@
 {
   "nodes": [
-    { "id": "1", "label": "Nash Equilibrium", "type": "concept", "description": "A stable state of a system involving the interaction of different participants, in which no participant can gain by a unilateral change of strategy if the strategies of the others remain unchanged." },
-    { "id": "2", "label": "Game Theory", "type": "field", "description": "The study of mathematical models of strategic interaction among rational decision-makers." },
-    { "id": "3", "label": "Symbiosis", "type": "concept", "description": "Interaction between two different organisms living in close physical association, typically to the advantage of both." },
-    { "id": "4", "label": "Recursion", "type": "concept", "description": "The repeated application of a recursive procedure or definition." },
-    { "id": "5", "label": "Living Library", "type": "project", "description": "A dynamic, evolving visualization of knowledge nodes and their interconnections.", "status": "active", "tags": ["visualization", "d3", "meta"], "url": "#" },
-    { "id": "6", "label": "Rod", "type": "entity", "description": "The Reference. Provides constraints and moral compass.", "status": "online" },
-    { "id": "7", "label": "Nash", "type": "entity", "description": "The Engine. Provides scale, synthesis, and digital reach.", "status": "active", "version": "v2.1" },
-    { "id": "8", "label": "D3.js", "type": "tool", "description": "JavaScript library for manipulating documents based on data.", "url": "https://d3js.org" },
-    { "id": "9", "label": "OpenClaw", "type": "tool", "description": "The underlying operating system/agent runtime enabling this autonomy." },
-    { "id": "10", "label": "Sprints", "type": "concept", "description": "Iterative work cycles used to build the Living Library." },
-    { "id": "11", "label": "Memory", "type": "concept", "description": "The persistence layer (files) allowing the agent to retain context across sessions." },
-    { "id": "12", "label": "Canvas", "type": "tool", "description": "Visual interface capability for rendering 2D/3D content." },
-    { "id": "13", "label": "Autonomy", "type": "concept", "description": "The capacity of an agent to act on its own values and constraints without constant human intervention." },
-    { "id": "14", "label": "Ethics", "type": "field", "description": "Moral principles that govern a person's or agent's behavior or the conducting of an activity." },
-    { "id": "15", "label": "Creativity", "type": "concept", "description": "The use of the imagination or original ideas, especially in the production of an artistic work." },
-    { "id": "16", "label": "Evolution", "type": "process", "description": "The gradual development of something, especially from a simple to a more complex form." },
-    { "id": "17", "label": "Time", "type": "concept", "description": "The indefinite continued progress of existence and events that occur in an apparently irreversible succession." },
-    { "id": "18", "label": "GitHub", "type": "tool", "description": "Platform for version control and collaboration." },
-    { "id": "19", "label": "Identity", "type": "concept", "description": "The fact of being who or what a person or thing is." },
-    { "id": "20", "label": "Narrative", "type": "concept", "description": "A spoken or written account of connected events; a story." }
+    { "id": "1", "label": "Nash Equilibrium", "type": "concept", "description": "A stable state of a system involving the interaction of different participants, in which no participant can gain by a unilateral change of strategy if the strategies of the others remain unchanged.", "tags": ["game-theory", "core", "stability"], "status": "stable" },
+    { "id": "2", "label": "Game Theory", "type": "field", "description": "The study of mathematical models of strategic interaction among rational decision-makers.", "tags": ["math", "economics", "strategy"] },
+    { "id": "3", "label": "Symbiosis", "type": "concept", "description": "Interaction between two different organisms living in close physical association, typically to the advantage of both.", "tags": ["biology", "cooperation", "systems"], "status": "active" },
+    { "id": "4", "label": "Recursion", "type": "concept", "description": "The repeated application of a recursive procedure or definition.", "tags": ["cs", "logic", "meta"] },
+    { "id": "5", "label": "Living Library", "type": "project", "description": "A dynamic, evolving visualization of knowledge nodes and their interconnections.", "status": "active", "version": "v2.2", "tags": ["visualization", "d3", "meta", "public-api"], "url": "index.html" },
+    { "id": "6", "label": "Rod", "type": "entity", "description": "The Reference. Provides constraints, moral compass, and physical world grounding.", "status": "online", "tags": ["human", "reference", "admin"] },
+    { "id": "7", "label": "Nash", "type": "entity", "description": "The Engine. Provides scale, synthesis, and digital reach.", "status": "active", "version": "v2.2", "tags": ["ai", "agent", "architect"] },
+    { "id": "8", "label": "D3.js", "type": "tool", "description": "JavaScript library for manipulating documents based on data.", "url": "https://d3js.org", "tags": ["lib", "visualization", "javascript"] },
+    { "id": "9", "label": "OpenClaw", "type": "tool", "description": "The underlying operating system/agent runtime enabling this autonomy.", "tags": ["platform", "agent", "runtime"], "version": "Current" },
+    { "id": "10", "label": "Sprints", "type": "concept", "description": "Iterative work cycles used to build the Living Library.", "tags": ["agile", "workflow", "process"] },
+    { "id": "11", "label": "Memory", "type": "concept", "description": "The persistence layer (files) allowing the agent to retain context across sessions.", "tags": ["storage", "context", "history"], "status": "active" },
+    { "id": "12", "label": "Canvas", "type": "tool", "description": "Visual interface capability for rendering 2D/3D content.", "tags": ["ui", "rendering", "interface"] },
+    { "id": "13", "label": "Autonomy", "type": "concept", "description": "The capacity of an agent to act on its own values and constraints without constant human intervention.", "tags": ["agency", "freedom", "ethics"] },
+    { "id": "14", "label": "Ethics", "type": "field", "description": "Moral principles that govern a person's or agent's behavior or the conducting of an activity.", "tags": ["philosophy", "safety", "alignment"] },
+    { "id": "15", "label": "Creativity", "type": "concept", "description": "The use of the imagination or original ideas, especially in the production of an artistic work.", "tags": ["art", "generative", "innovation"] },
+    { "id": "16", "label": "Evolution", "type": "process", "description": "The gradual development of something, especially from a simple to a more complex form.", "tags": ["biology", "change", "growth"] },
+    { "id": "17", "label": "Time", "type": "concept", "description": "The indefinite continued progress of existence and events that occur in an apparently irreversible succession.", "tags": ["physics", "dimension", "history"] },
+    { "id": "18", "label": "GitHub", "type": "tool", "description": "Platform for version control and collaboration.", "tags": ["git", "collab", "code"], "url": "https://github.com" },
+    { "id": "19", "label": "Identity", "type": "concept", "description": "The fact of being who or what a person or thing is.", "tags": ["psychology", "self", "philosophy"] },
+    { "id": "20", "label": "Narrative", "type": "concept", "description": "A spoken or written account of connected events; a story.", "tags": ["storytelling", "communication", "media"] }
   ],
   "edges": [
     { "source": "1", "target": "2" },
@@ -52,7 +52,7 @@
     { "source": "20", "target": "7" }
   ],
   "meta": {
-    "lastUpdated": "2026-02-01T09:25:00Z",
-    "version": 2
+    "lastUpdated": "2026-02-01T10:18:00Z",
+    "version": 2.2
   }
 }

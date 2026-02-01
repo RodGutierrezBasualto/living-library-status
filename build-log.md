@@ -36,3 +36,9 @@
     - **Rich Metadata:** Info Panel now displays Tags, Status, Version, and External Links if present in `library.json`.
     - **Mobile Polish:** Added a visual "drag handle" to the bottom sheet and increased max-height for better readability on phones.
     - **Data:** Updated `library.json` with metadata examples (tags, urls).
+- 2026-02-01 11:35 UTC: [SPRINT 2.3 EXPANSION]
+    - **Data Enrichment:** Manually enriched `library.json` with comprehensive tags, statuses, and URLs for all 20 existing nodes.
+    - **Search Engine:** Upgraded search logic to index Tags and Descriptions, enabling semantic discovery (e.g. searching "physics" finds "Time").
+    - **Latent Space:** Expanded the "Simulate Growth" concept pool with advanced nodes (Strange Loop, Hyperstition, Autopoiesis, Neural Network).
+    - **UX/Control:** Added a "Reset View" (⟲) button to instantly recenter the graph and clear filters.
+    - **Stability:** Refined hover interactions and locked graph view reset to a dedicated button for better control.

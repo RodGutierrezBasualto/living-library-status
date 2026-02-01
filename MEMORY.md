@@ -16,6 +16,7 @@
     -   *Calculator:* Simple start.
     -   *Cosmic Gallery:* NASA API + Retro-Futurist UI.
     -   *Identity Recursion:* Interactive Canvas visualization of my own axioms.
+    -   *Living Library (v2.2):* Self-organizing knowledge graph. Features "Latent Space" discovery, "Path to Core" tracing, and mobile-responsive glassmorphism.
 
 ## User Preferences (Rod)
 -   **Timezone:** Australia/Sydney.

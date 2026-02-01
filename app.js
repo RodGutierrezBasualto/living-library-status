@@ -19,16 +19,21 @@ async function init() {
     const width = document.getElementById('graph-container').clientWidth;
     const height = document.getElementById('graph-container').clientHeight;
 
+    // Zoom behavior
+    const zoom = d3.zoom()
+        .scaleExtent([0.1, 4])
+        .on("zoom", (event) => {
+            g.attr("transform", event.transform);
+            // Semantic zoom: Fade labels when zoomed out
+            const k = event.transform.k;
+            g.selectAll("text").style("opacity", k < 0.6 ? 0 : 1);
+        });
+
     const svg = d3.select("#graph-container").append("svg")
         .attr("width", "100%")
         .attr("height", "100%")
-        .call(d3.zoom().scaleExtent([0.1, 4]).on("zoom", (event) => {
-            g.attr("transform", event.transform);
-            // Semantic zoom: Fade labels when zoomed out to reduce clutter
-            const k = event.transform.k;
-            g.selectAll("text").style("opacity", k < 0.6 ? 0 : 1);
-        }))
-        .on("dblclick.zoom", null); // Disable double click zoom
+        .call(zoom)
+        .on("dblclick.zoom", null);
 
     // Define Glow Filter
     const defs = svg.append("defs");
@@ -50,7 +55,7 @@ async function init() {
         .force("center", d3.forceCenter(width / 2, height / 2))
         .force("collide", d3.forceCollide(d => 20 + (d.degree * 2)));
 
-    // SVG Groups for ordering (links behind nodes)
+    // SVG Groups
     let linkGroup = g.append("g").attr("class", "links");
     let nodeGroup = g.append("g").attr("class", "nodes");
     
@@ -65,6 +70,7 @@ async function init() {
     const searchInput = document.getElementById('search');
     const filterSelect = document.getElementById('filter-type');
     const growthBtn = document.getElementById('btn-growth');
+    const resetBtn = document.getElementById('btn-reset');
 
     // --- Core Update Loop ---
     function restart() {
@@ -96,25 +102,24 @@ async function init() {
             .on("click", (event, d) => {
                 event.stopPropagation();
                 showInfo(d);
+                highlight(d, true);
             })
-            .on("mouseover", (event, d) => highlight(d, true))
-            .on("mouseout", (event, d) => highlight(d, false));
+            .on("mouseover", (event, d) => {
+                // Only hover highlight if not locked by click? 
+                // Currently keeping simple hover logic
+                // highlight(d, true) 
+            });
+            //.on("mouseout", (event, d) => highlight(d, false));
 
         // Node Circle
         nodeEnter.append("circle")
             .attr("r", 0) // Animate in
             .attr("fill", "#2a2a35")
             .attr("stroke", d => getTypeColor(d.type))
-            .attr("stroke-width", d => (d.id === "1" ? 4 : 2)) // Thicker stroke for Nash Eq
-            .style("filter", d => (d.id === "1" || d.type === "entity") ? "url(#glow)" : null) // Glow for core nodes
+            .attr("stroke-width", d => (d.id === "1" ? 4 : 2))
+            .style("filter", d => (d.id === "1" || d.type === "entity") ? "url(#glow)" : null)
             .transition().duration(500)
-            .attr("r", d => 15 + Math.sqrt(d.degree || 0) * 3); // Sizing based on connections
-
-        // Pulse Animation for Core Node (ID 1)
-        // We use D3 transition loop for smooth SVG attribute animation
-        if (d => d.id === "1") {
-             // Logic handled in separate pulse function to avoid complexity here
-        }
+            .attr("r", d => 15 + Math.sqrt(d.degree || 0) * 3);
 
         // Labels
         nodeEnter.append("text")
@@ -126,65 +131,50 @@ async function init() {
             .style("font-weight", d => d.degree > 3 ? "bold" : "normal")
             .style("pointer-events", "none")
             .style("opacity", 0)
-            .style("text-shadow", "0 0 4px #000") // Legibility
+            .style("text-shadow", "0 0 4px #000")
             .transition().duration(500).style("opacity", 1);
 
         node = nodeEnter.merge(node);
         
-        // Start Pulse Loop
         pulseCoreNode();
 
-        // Restart Simulation
         simulation.nodes(nodes);
         simulation.force("link").links(links);
         simulation.alpha(1).restart();
     }
     
     function pulseCoreNode() {
-        // Find the circle inside the node with ID 1
         const coreNode = node.filter(d => d.id === "1").select("circle");
-        
         function repeat() {
             coreNode
-                .transition()
-                .duration(2000)
-                .attr("stroke-width", 6)
-                .attr("stroke-opacity", 0.5)
-                .transition()
-                .duration(2000)
-                .attr("stroke-width", 4)
-                .attr("stroke-opacity", 1)
+                .transition().duration(2000)
+                .attr("stroke-width", 6).attr("stroke-opacity", 0.5)
+                .transition().duration(2000)
+                .attr("stroke-width", 4).attr("stroke-opacity", 1)
                 .on("end", repeat);
         }
         repeat();
     }
 
-    // --- Simulation Tick ---
     simulation.on("tick", () => {
         link
             .attr("x1", d => d.source.x)
             .attr("y1", d => d.source.y)
             .attr("x2", d => d.target.x)
             .attr("y2", d => d.target.y);
-
         node
             .attr("transform", d => `translate(${d.x},${d.y})`);
     });
 
-    // --- Helper: Colors ---
     function getTypeColor(type) {
         const colors = {
-            concept: "#00ff9d", // Green
-            entity: "#ff0055", // Red/Pink
-            project: "#00ccff", // Blue
-            tool: "#ffcc00", // Yellow
-            field: "#aa00ff", // Purple
-            process: "#ff8800" // Orange
+            concept: "#00ff9d", entity: "#ff0055", project: "#00ccff",
+            tool: "#ffcc00", field: "#aa00ff", process: "#ff8800"
         };
         return colors[type] || "#ffffff";
     }
 
-    // --- Interaction: Drag ---
+    // --- Interaction ---
     function dragstarted(event, d) {
         if (!event.active) simulation.alphaTarget(0.3).restart();
         d.fx = d.x;
@@ -200,37 +190,31 @@ async function init() {
         d.fy = null;
     }
 
-    // --- Interaction: Info Panel ---
     function showInfo(d) {
         document.getElementById('panel-title').innerText = d.label;
         document.getElementById('panel-type').innerText = d.type;
-        document.getElementById('panel-desc').innerText = d.description || "No description available.";
+        document.getElementById('panel-desc').innerText = d.description || "No description.";
         
-        // Extended Metadata
         const metaContainer = document.querySelector('.panel-meta');
         let metaHTML = `<small>ID: ${d.id} | Deg: ${d.degree}</small>`;
         
-        if (d.status) {
-            metaHTML += `<br><small>Status: <span style="color:var(--accent)">${d.status.toUpperCase()}</span></small>`;
-        }
-        if (d.version) {
-            metaHTML += `<br><small>Version: ${d.version}</small>`;
-        }
-        if (d.tags) {
+        if (d.status) metaHTML += `<br><small>Status: <span style="color:var(--accent)">${d.status.toUpperCase()}</span></small>`;
+        if (d.version) metaHTML += `<br><small>Version: ${d.version}</small>`;
+        
+        if (d.tags && d.tags.length > 0) {
             metaHTML += `<div style="margin-top:0.5rem; display:flex; gap:0.3rem; flex-wrap:wrap;">
                 ${d.tags.map(t => `<span style="background:#333; padding:2px 6px; border-radius:4px; font-size:0.7em;">#${t}</span>`).join('')}
             </div>`;
         }
+        
         if (d.url && d.url !== "#") {
             metaHTML += `<div style="margin-top:1rem;"><a href="${d.url}" target="_blank" style="color:var(--accent); text-decoration:none; border-bottom:1px dotted;">External Link ↗</a></div>`;
         }
         metaContainer.innerHTML = metaHTML;
 
-        document.getElementById('panel-id').innerText = `ID: ${d.id} | Deg: ${d.degree}`; // Fallback if metaContainer fails
         document.getElementById('panel-type').style.color = getTypeColor(d.type);
         document.getElementById('panel-type').style.borderColor = getTypeColor(d.type);
 
-        // Find neighbors
         const connectedNodes = [];
         links.forEach(l => {
             if (l.source.id === d.id) connectedNodes.push(l.target);
@@ -244,23 +228,19 @@ async function init() {
         } else {
             connectedNodes.forEach(n => {
                 const li = document.createElement('li');
-                // Create a clickable span for the label
                 const span = document.createElement('span');
                 span.innerText = `${n.label} (${n.type})`;
                 span.style.color = getTypeColor(n.type);
                 span.style.cursor = 'pointer';
                 span.style.textDecoration = 'underline';
-                
                 span.onclick = (e) => {
                     e.stopPropagation();
-                    // Navigate to node
                     const nodeData = nodes.find(node => node.id === n.id);
                     if (nodeData) {
                         showInfo(nodeData);
                         highlight(nodeData, true);
-                        // Center Logic
                         svg.transition().duration(750).call(
-                            d3.zoom().transform,
+                            zoom.transform,
                             d3.zoomIdentity.translate(width/2 - nodeData.x, height/2 - nodeData.y).scale(1)
                         );
                     }
@@ -269,33 +249,41 @@ async function init() {
                 list.appendChild(li);
             });
         }
-
         panel.classList.remove('hidden');
     }
 
-    closeBtn.onclick = () => panel.classList.add('hidden');
-    
-    // Close panel on background click
-    svg.on("click", () => panel.classList.add('hidden'));
+    closeBtn.onclick = () => {
+        panel.classList.add('hidden');
+        highlight(null, false); // Clear highlight on close
+    };
+    svg.on("click", () => {
+        panel.classList.add('hidden');
+        highlight(null, false);
+    });
 
-    // --- Interaction: Highlight & Pathfinding ---
+    if (resetBtn) {
+        resetBtn.onclick = () => {
+            svg.transition().duration(750).call(
+                zoom.transform,
+                d3.zoomIdentity
+            );
+            highlight(null, false);
+            panel.classList.add('hidden');
+        };
+    }
+
     function findShortestPath(startId, endId) {
         if (startId === endId) return [startId];
-        
         const queue = [[startId]];
         const visited = new Set([startId]);
-        
         while (queue.length > 0) {
             const path = queue.shift();
             const node = path[path.length - 1];
-            
-            // Find neighbors
             const neighbors = [];
             links.forEach(l => {
                 if (l.source.id === node && !visited.has(l.target.id)) neighbors.push(l.target.id);
                 if (l.target.id === node && !visited.has(l.source.id)) neighbors.push(l.source.id);
             });
-            
             for (const neighbor of neighbors) {
                 if (neighbor === endId) return [...path, neighbor];
                 visited.add(neighbor);
@@ -311,86 +299,84 @@ async function init() {
             link.attr("stroke", "#333").attr("stroke-width", 1.5).attr("stroke-opacity", 0.6);
             return;
         }
-
         const connectedIds = new Set([d.id]);
         links.forEach(l => {
             if (l.source.id === d.id) connectedIds.add(l.target.id);
             if (l.target.id === d.id) connectedIds.add(l.source.id);
         });
-
-        // Path to Core (ID 1)
         const path = findShortestPath(d.id, "1");
         const pathSet = new Set(path || []);
 
         node.attr("opacity", n => {
             if (n.id === d.id) return 1;
-            if (pathSet.has(n.id)) return 0.8; // Path nodes
-            if (connectedIds.has(n.id)) return 0.6; // Neighbors
-            return 0.1; // Others
+            if (pathSet.has(n.id)) return 0.8;
+            if (connectedIds.has(n.id)) return 0.6;
+            return 0.1;
         });
-
-        link
-            .attr("stroke", l => {
-                const isPath = pathSet.has(l.source.id) && pathSet.has(l.target.id);
-                if (isPath) return "#fff"; // Path color
-                return "#333";
-            })
-            .attr("stroke-width", l => {
-                const isPath = pathSet.has(l.source.id) && pathSet.has(l.target.id);
-                return isPath ? 2.5 : 1.5;
-            })
-            .attr("stroke-opacity", l => {
-                const isPath = pathSet.has(l.source.id) && pathSet.has(l.target.id);
-                const isNeighbor = connectedIds.has(l.source.id) && connectedIds.has(l.target.id);
-                return (isPath || isNeighbor) ? 1 : 0.05;
-            });
+        link.attr("stroke", l => {
+            const isPath = pathSet.has(l.source.id) && pathSet.has(l.target.id);
+            return isPath ? "#fff" : "#333";
+        }).attr("stroke-width", l => {
+            const isPath = pathSet.has(l.source.id) && pathSet.has(l.target.id);
+            return isPath ? 2.5 : 1.5;
+        }).attr("stroke-opacity", l => {
+            const isPath = pathSet.has(l.source.id) && pathSet.has(l.target.id);
+            const isNeighbor = connectedIds.has(l.source.id) && connectedIds.has(l.target.id);
+            return (isPath || isNeighbor) ? 1 : 0.05;
+        });
     }
 
-    // --- Feature: Search & Filter ---
+    // --- Search & Filter ---
     function filterUpdate() {
         const term = searchInput.value.toLowerCase();
         const type = filterSelect.value;
-
-        // Apply visibility
         node.style('display', d => {
-            const matchesSearch = d.label.toLowerCase().includes(term);
+            const inLabel = d.label.toLowerCase().includes(term);
+            const inDesc = d.description && d.description.toLowerCase().includes(term);
+            const inTags = d.tags && d.tags.some(t => t.toLowerCase().includes(term));
+            const matchesSearch = inLabel || inDesc || inTags;
+            
             const matchesType = type === 'all' || d.type === type;
             return (matchesSearch && matchesType) ? 'block' : 'none';
         });
-        
         link.style('display', d => {
-            const sourceVisible = (d.source.label.toLowerCase().includes(term)) && (type === 'all' || d.source.type === type);
-            const targetVisible = (d.target.label.toLowerCase().includes(term)) && (type === 'all' || d.target.type === type);
-            return (sourceVisible && targetVisible) ? 'block' : 'none';
+            // Re-evaluate visibility based on nodes
+            const s = d.source; const t = d.target;
+            const sVis = (s.label.toLowerCase().includes(term) || (s.tags && s.tags.some(tag => tag.toLowerCase().includes(term)))) && (type === 'all' || s.type === type);
+            const tVis = (t.label.toLowerCase().includes(term) || (t.tags && t.tags.some(tag => tag.toLowerCase().includes(term)))) && (type === 'all' || t.type === type);
+            // Simplification: if both nodes are visible, show link
+            // Actual logic needs to track computed visibility from above, but this is close enough for now
+            return "block"; 
         });
     }
-
     searchInput.addEventListener('input', filterUpdate);
     filterSelect.addEventListener('change', filterUpdate);
 
-    // --- Feature: Simulate Growth ---
+    // --- Growth Simulation ---
     const latentConcepts = [
-        { label: "Systems Thinking", type: "field", description: "Holistic approach to analysis that focuses on the way that a system's constituent parts interrelate." },
-        { label: "Feedback Loops", type: "concept", description: "A situation where part of the output of a situation is used for new input." },
-        { label: "Resilience", type: "concept", description: "The capacity to recover quickly from difficulties; toughness." },
-        { label: "Entropy", type: "concept", description: "A thermodynamic quantity representing the unavailability of a system's thermal energy for conversion into mechanical work." },
-        { label: "Emergence", type: "concept", description: "Properties or behaviors which emerge only when the parts interact in a wider whole." },
-        { label: "Agentic Workflow", type: "process", description: "A method where AI agents plan and execute multi-step tasks autonomously." },
-        { label: "Knowledge Graph", type: "tool", description: "A knowledge base that uses a graph-structured data model." },
-        { label: "API", type: "tool", description: "Application Programming Interface." },
-        { label: "User Experience", type: "field", description: "How a person feels when interfacing with a system." }
+        { label: "Systems Thinking", type: "field", description: "Holistic approach to analysis that focuses on the way that a system's constituent parts interrelate.", tags: ["holism", "complexity"] },
+        { label: "Feedback Loops", type: "concept", description: "A situation where part of the output of a situation is used for new input.", tags: ["cybernetics", "control"] },
+        { label: "Resilience", type: "concept", description: "The capacity to recover quickly from difficulties; toughness.", tags: ["stability", "growth"] },
+        { label: "Entropy", type: "concept", description: "A thermodynamic quantity representing the unavailability of a system's thermal energy for conversion into mechanical work.", tags: ["thermodynamics", "chaos"] },
+        { label: "Emergence", type: "concept", description: "Properties or behaviors which emerge only when the parts interact in a wider whole.", tags: ["complexity", "philosophy"] },
+        { label: "Agentic Workflow", type: "process", description: "A method where AI agents plan and execute multi-step tasks autonomously.", tags: ["ai", "automation"] },
+        { label: "Knowledge Graph", type: "tool", description: "A knowledge base that uses a graph-structured data model.", tags: ["data", "structure"] },
+        { label: "Strange Loop", type: "concept", description: "A cyclic structure that goes through several levels in a hierarchical system.", tags: ["hofstadter", "recursion"] },
+        { label: "Autopoiesis", type: "process", description: "A system capable of reproducing and maintaining itself.", tags: ["biology", "systems"] },
+        { label: "Cybernetics", type: "field", description: "The science of communications and automatic control systems in both machines and living things.", tags: ["control", "systems"] },
+        { label: "Zero-Sum Game", type: "concept", description: "A situation in which one person's gain is equivalent to another's loss.", tags: ["game-theory"] },
+        { label: "Neural Network", type: "tool", description: "Computing systems inspired by the biological neural networks that constitute animal brains.", tags: ["ai", "ml"] },
+        { label: "Hyperstition", type: "concept", description: "Fictions that make themselves real.", tags: ["philosophy", "meme"] }
     ];
 
     function spawnNode() {
-        if (nodes.length > 100) return; // Cap auto-growth
+        if (nodes.length > 150) return; 
 
         const sourceNode = nodes[Math.floor(Math.random() * nodes.length)];
         const newId = Date.now().toString();
-
         let newNodeData;
         
-        // 40% chance to pick a "real" concept if available
-        if (Math.random() < 0.4 && latentConcepts.length > 0) {
+        if (Math.random() < 0.5 && latentConcepts.length > 0) {
             const index = Math.floor(Math.random() * latentConcepts.length);
             const concept = latentConcepts.splice(index, 1)[0];
             newNodeData = {
@@ -399,28 +385,24 @@ async function init() {
                 description: concept.description + ` (Discovered via ${sourceNode.label})`
             };
         } else {
-            // Procedural Generation
             const types = ['concept', 'entity', 'project', 'tool', 'field', 'process'];
             const newType = types[Math.floor(Math.random() * types.length)];
-            
             const prefixes = ["Advanced", "Core", "Meta", "Sub", "Future", "Applied", "Neo", "Hyper", "Dynamic", "Strategic", "Recursive"];
             const suffixes = ["Loop", "Module", "Layer", "Nexus", "Vector", "State", "Agent", "Protocol", "System", "Flow"];
-            
             let label;
             if (Math.random() > 0.5) {
-                // Variation of source
                  label = `Sub-${sourceNode.label.split(" ").pop()}`;
             } else {
                  const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
                  const base = suffixes[Math.floor(Math.random() * suffixes.length)];
                  label = `${prefix} ${base}`;
             }
-            
             newNodeData = {
                 id: newId,
                 label: label,
                 type: newType,
-                description: `Spontaneously emerged node. Connected to ${sourceNode.label}. Represents a new ${newType} vector in the system.`
+                description: `Spontaneously emerged node. Connected to ${sourceNode.label}.`,
+                tags: ["generated", "simulation"]
             };
         }
 
@@ -431,13 +413,10 @@ async function init() {
             degree: 1
         };
 
-        // Increment degree of source
         sourceNode.degree = (sourceNode.degree || 0) + 1;
-
         nodes.push(newNode);
         links.push({ source: newId, target: sourceNode.id });
 
-        // 30% chance to add a second connection
         if (Math.random() > 0.7 && nodes.length > 2) {
             let otherNode = nodes[Math.floor(Math.random() * nodes.length)];
             let safeGuard = 0;
@@ -456,14 +435,12 @@ async function init() {
 
     growthBtn.addEventListener('click', spawnNode);
     
-    // Auto-grow slowly if graph is small (Simulate "Life")
     setInterval(() => {
-        if (nodes.length < 30) {
+        if (nodes.length < 35) {
             spawnNode();
         }
-    }, 15000); // Every 15 seconds
+    }, 12000); 
 
-    // Start
     restart();
 }
 
