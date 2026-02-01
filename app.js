@@ -14,6 +14,9 @@ async function init() {
         .attr("height", "100%")
         .call(d3.zoom().on("zoom", (event) => {
             g.attr("transform", event.transform);
+            // Semantic zoom: Fade labels when zoomed out to reduce clutter
+            const k = event.transform.k;
+            g.selectAll("text").style("opacity", k < 0.7 ? 0 : 1);
         }));
 
     const g = svg.append("g");
@@ -161,6 +164,18 @@ async function init() {
                 const li = document.createElement('li');
                 li.innerText = `${n.label} (${n.type})`;
                 li.style.color = getTypeColor(n.type);
+                li.style.cursor = 'pointer';
+                li.style.textDecoration = 'underline';
+                li.onclick = () => {
+                    // Navigate to node
+                    const nodeData = nodes.find(node => node.id === n.id);
+                    if (nodeData) {
+                        showInfo(nodeData);
+                        // Optional: Center view on node (requires complex transform math, skipping for now)
+                        highlight(nodeData, true);
+                        setTimeout(() => highlight(nodeData, false), 1000);
+                    }
+                };
                 list.appendChild(li);
             });
         }
@@ -212,30 +227,45 @@ async function init() {
 
     // --- Feature: Simulate Growth ---
     growthBtn.addEventListener('click', () => {
-        const newId = (nodes.length + 1).toString() + "-" + Math.floor(Math.random() * 1000); // Uniqueish ID
+        if (nodes.length === 0) return;
+
+        const sourceNode = nodes[Math.floor(Math.random() * nodes.length)];
+        const newId = Date.now().toString(); // Better unique ID
+
+        // Generate context-aware metadata
         const types = ['concept', 'entity', 'project', 'tool', 'field'];
-        const randomType = types[Math.floor(Math.random() * types.length)];
-        const randomLabel = `Auto-${randomType.charAt(0).toUpperCase() + randomType.slice(1)} ${Math.floor(Math.random()*100)}`;
+        const newType = types[Math.floor(Math.random() * types.length)];
         
+        const prefixes = ["Advanced", "Core", "Meta", "Sub", "Future", "Applied"];
+        const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+        const label = `${prefix} ${sourceNode.label.split(" ").pop()}`; // e.g. "Meta Theory" from "Game Theory"
+
         const newNode = {
             id: newId,
-            label: randomLabel,
-            type: randomType,
-            description: "Auto-generated node from simulation.",
-            x: width/2 + (Math.random() - 0.5) * 50, // Spawn near center
-            y: height/2 + (Math.random() - 0.5) * 50
+            label: label,
+            type: newType,
+            description: `Auto-evolved node derived from ${sourceNode.label}. Represents a ${newType} extension of the core graph.`,
+            x: sourceNode.x + (Math.random() - 0.5) * 50, // Spawn near parent
+            y: sourceNode.y + (Math.random() - 0.5) * 50
         };
 
         nodes.push(newNode);
+        links.push({ source: newId, target: sourceNode.id });
 
-        // Connect to 1 random existing node
-        if (nodes.length > 1) {
-            const targetNode = nodes[Math.floor(Math.random() * (nodes.length - 1))];
-            links.push({ source: newId, target: targetNode.id });
+        // 30% chance to add a second connection to another random node (triangulation)
+        if (Math.random() > 0.7 && nodes.length > 2) {
+            let otherNode = nodes[Math.floor(Math.random() * nodes.length)];
+            while (otherNode.id === newNode.id || otherNode.id === sourceNode.id) {
+                otherNode = nodes[Math.floor(Math.random() * nodes.length)];
+            }
+            links.push({ source: newId, target: otherNode.id });
         }
 
         restart();
-        filterUpdate(); // Re-apply filters if active
+        filterUpdate(); 
+        
+        // Flash message or log? keeping it simple for now.
+        console.log(`Growth: Added ${label} connected to ${sourceNode.label}`);
     });
 
     // Start

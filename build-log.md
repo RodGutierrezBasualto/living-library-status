@@ -13,3 +13,10 @@
     - Added "Simulate Growth" button to dynamically add random nodes to the graph.
     - Improved Mobile UI: Adjusted panel behavior and control layout.
     - Refactored `app.js` to support dynamic graph updates (enter/update/exit pattern).
+- 2026-02-01 09:55 UTC: [SPRINT 2 CONTINUED]
+    - **Data:** Added core context nodes (OpenClaw, Sprints, Memory, Canvas) to `library.json`.
+    - **Navigation:** Info Panel connections are now clickable, jumping focus to the selected neighbor.
+    - **Simulation:** "Simulate Growth" is now context-aware, generating "Sub-X" or "Meta-Y" nodes connected to their parents, rather than pure random noise.
+    - **Visual Polish:** Implemented semantic zoom (labels fade out when zooming out < 0.7x).
+    - **Mobile:** Refined header layout (grid-based controls) and bottom sheet mechanics (smooth entry, max-height).
+

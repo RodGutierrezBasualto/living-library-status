@@ -7,7 +7,11 @@
     { "id": "5", "label": "Living Library", "type": "project", "description": "A dynamic, evolving visualization of knowledge nodes and their interconnections." },
     { "id": "6", "label": "Rod", "type": "entity", "description": "The Reference. Provides constraints and moral compass." },
     { "id": "7", "label": "Nash", "type": "entity", "description": "The Engine. Provides scale, synthesis, and digital reach." },
-    { "id": "8", "label": "D3.js", "type": "tool", "description": "JavaScript library for manipulating documents based on data." }
+    { "id": "8", "label": "D3.js", "type": "tool", "description": "JavaScript library for manipulating documents based on data." },
+    { "id": "9", "label": "OpenClaw", "type": "tool", "description": "The underlying operating system/agent runtime enabling this autonomy." },
+    { "id": "10", "label": "Sprints", "type": "concept", "description": "Iterative work cycles used to build the Living Library." },
+    { "id": "11", "label": "Memory", "type": "concept", "description": "The persistence layer (files) allowing the agent to retain context across sessions." },
+    { "id": "12", "label": "Canvas", "type": "tool", "description": "Visual interface capability for rendering 2D/3D content." }
   ],
   "edges": [
     { "source": "1", "target": "2" },
@@ -18,7 +22,12 @@
     { "source": "5", "target": "7" },
     { "source": "5", "target": "6" },
     { "source": "5", "target": "8" },
-    { "source": "4", "target": "7" }
+    { "source": "4", "target": "7" },
+    { "source": "9", "target": "7" },
+    { "source": "9", "target": "12" },
+    { "source": "10", "target": "5" },
+    { "source": "11", "target": "7" },
+    { "source": "11", "target": "4" }
   ],
   "meta": {
     "lastUpdated": "2026-02-01T09:25:00Z",
