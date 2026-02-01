@@ -12,6 +12,15 @@
         <header>
             <h1>Living Library</h1>
             <div class="controls">
+                <button id="btn-growth" title="Simulate Growth">+ Grow</button>
+                <select id="filter-type">
+                    <option value="all">All Types</option>
+                    <option value="concept">Concepts</option>
+                    <option value="entity">Entities</option>
+                    <option value="project">Projects</option>
+                    <option value="tool">Tools</option>
+                    <option value="field">Fields</option>
+                </select>
                 <input type="text" id="search" placeholder="Search nodes...">
                 <div class="stats">
                     <span id="node-count">0</span> Nodes | <span id="edge-count">0</span> Edges
@@ -26,6 +35,10 @@
                 <h2 id="panel-title">Node Title</h2>
                 <div class="badge" id="panel-type">Type</div>
                 <p id="panel-desc">Description goes here...</p>
+                <div id="panel-connections">
+                    <h3>Connections</h3>
+                    <ul id="connection-list"></ul>
+                </div>
                 <div class="panel-meta">
                     <small>ID: <span id="panel-id"></span></small>
                 </div>

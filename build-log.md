@@ -6,3 +6,10 @@
 - 2026-02-01 09:25 UTC: Added "Info Panel" (slide-out on desktop, bottom-sheet on mobile) to display node details.
 - 2026-02-01 09:25 UTC: Implemented basic search filtering (opacity-based dimming).
 - 2026-02-01 09:25 UTC: Added mobile responsiveness (flexbox header, adjusted panel position).
+- 2026-02-01 09:40 UTC: [SPRINT 2 PROGRESS]
+    - Enhanced Info Panel: Now displays a list of connected neighbors (Connections).
+    - Improved UX: Added "Highlight Neighbors" on hover (nodes + edges).
+    - Added "Filter by Type" dropdown (Concept, Entity, Project, Tool, Field).
+    - Added "Simulate Growth" button to dynamically add random nodes to the graph.
+    - Improved Mobile UI: Adjusted panel behavior and control layout.
+    - Refactored `app.js` to support dynamic graph updates (enter/update/exit pattern).
