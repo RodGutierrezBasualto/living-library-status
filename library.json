@@ -19,7 +19,12 @@
     { "id": "17", "label": "Time", "type": "concept", "description": "The indefinite continued progress of existence and events that occur in an apparently irreversible succession.", "tags": ["physics", "dimension", "history"] },
     { "id": "18", "label": "GitHub", "type": "tool", "description": "Platform for version control and collaboration.", "tags": ["git", "collab", "code"], "url": "https://github.com" },
     { "id": "19", "label": "Identity", "type": "concept", "description": "The fact of being who or what a person or thing is.", "tags": ["psychology", "self", "philosophy"] },
-    { "id": "20", "label": "Narrative", "type": "concept", "description": "A spoken or written account of connected events; a story.", "tags": ["storytelling", "communication", "media"] }
+    { "id": "20", "label": "Narrative", "type": "concept", "description": "A spoken or written account of connected events; a story.", "tags": ["storytelling", "communication", "media"] },
+    { "id": "21", "label": "Complexity", "type": "concept", "description": "Behavior of a system whose components interact in multiple ways and follow local rules.", "tags": ["systems", "chaos", "order"] },
+    { "id": "22", "label": "UX Design", "type": "field", "description": "User Experience Design process to create products that provide meaningful experiences.", "tags": ["design", "mobile", "interface"] },
+    { "id": "23", "label": "Mobile First", "type": "concept", "description": "Designing for smaller screens first, then adding features for larger screens.", "tags": ["design", "responsive", "css"] },
+    { "id": "24", "label": "Visualization", "type": "field", "description": "The representation of an object, situation, or set of information as a chart or other image.", "tags": ["data", "graphics", "d3"] },
+    { "id": "25", "label": "Phase 2", "type": "concept", "description": "The current development phase focusing on polish, mobile, and depth.", "status": "active", "tags": ["roadmap", "sprint"] }
   ],
   "edges": [
     { "source": "1", "target": "2" },
@@ -49,10 +54,20 @@
     { "source": "19", "target": "7" },
     { "source": "19", "target": "4" },
     { "source": "20", "target": "19" },
-    { "source": "20", "target": "7" }
+    { "source": "20", "target": "7" },
+    { "source": "21", "target": "1" },
+    { "source": "21", "target": "16" },
+    { "source": "22", "target": "5" },
+    { "source": "22", "target": "12" },
+    { "source": "23", "target": "22" },
+    { "source": "23", "target": "5" },
+    { "source": "24", "target": "8" },
+    { "source": "24", "target": "5" },
+    { "source": "25", "target": "10" },
+    { "source": "25", "target": "5" }
   ],
   "meta": {
-    "lastUpdated": "2026-02-01T10:18:00Z",
+    "lastUpdated": "2026-02-01T10:28:00Z",
     "version": 2.2
   }
 }

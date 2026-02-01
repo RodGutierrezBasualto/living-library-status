@@ -77,6 +77,13 @@ async function init() {
         // Update Stats
         nodeCountEl.innerText = nodes.length;
         edgeCountEl.innerText = links.length;
+        
+        // Encourage growth if small
+        if (nodes.length < 30) {
+            growthBtn.classList.add('growth-pulse');
+        } else {
+            growthBtn.classList.remove('growth-pulse');
+        }
 
         // Apply Data - Links
         link = link.data(links, d => d.source.id + "-" + d.target.id);
@@ -200,10 +207,14 @@ async function init() {
         
         if (d.status) metaHTML += `<br><small>Status: <span style="color:var(--accent)">${d.status.toUpperCase()}</span></small>`;
         if (d.version) metaHTML += `<br><small>Version: ${d.version}</small>`;
+        if (d.birthTime) {
+             const date = new Date(d.birthTime);
+             metaHTML += `<br><small>Created: ${date.toLocaleTimeString()} (${date.toLocaleDateString()})</small>`;
+        }
         
         if (d.tags && d.tags.length > 0) {
-            metaHTML += `<div style="margin-top:0.5rem; display:flex; gap:0.3rem; flex-wrap:wrap;">
-                ${d.tags.map(t => `<span style="background:#333; padding:2px 6px; border-radius:4px; font-size:0.7em;">#${t}</span>`).join('')}
+            metaHTML += `<div style="margin-top:0.5rem; display:flex; gap:0.3rem; flex-wrap:wrap;" id="panel-tags">
+                ${d.tags.map(t => `<span class="tag-pill" data-tag="${t}" style="background:#333; padding:2px 6px; border-radius:4px; font-size:0.7em; cursor:pointer; transition:background 0.2s;">#${t}</span>`).join('')}
             </div>`;
         }
         
@@ -211,6 +222,21 @@ async function init() {
             metaHTML += `<div style="margin-top:1rem;"><a href="${d.url}" target="_blank" style="color:var(--accent); text-decoration:none; border-bottom:1px dotted;">External Link ↗</a></div>`;
         }
         metaContainer.innerHTML = metaHTML;
+
+        // Tag Click Handlers
+        const tags = metaContainer.querySelectorAll('.tag-pill');
+        tags.forEach(tag => {
+            tag.onclick = (e) => {
+                e.stopPropagation();
+                const term = e.target.dataset.tag;
+                searchInput.value = term;
+                filterUpdate();
+                // Visual feedback
+                tags.forEach(t => t.style.background = '#333');
+                e.target.style.background = 'var(--accent)';
+                e.target.style.color = '#000';
+            };
+        });
 
         document.getElementById('panel-type').style.color = getTypeColor(d.type);
         document.getElementById('panel-type').style.borderColor = getTypeColor(d.type);
@@ -330,23 +356,27 @@ async function init() {
     function filterUpdate() {
         const term = searchInput.value.toLowerCase();
         const type = filterSelect.value;
-        node.style('display', d => {
+        
+        // First pass: determine node visibility
+        const visibleNodeIds = new Set();
+        
+        node.classed("node-dimmed", d => {
             const inLabel = d.label.toLowerCase().includes(term);
             const inDesc = d.description && d.description.toLowerCase().includes(term);
             const inTags = d.tags && d.tags.some(t => t.toLowerCase().includes(term));
             const matchesSearch = inLabel || inDesc || inTags;
-            
             const matchesType = type === 'all' || d.type === type;
-            return (matchesSearch && matchesType) ? 'block' : 'none';
+            
+            const isVisible = matchesSearch && matchesType;
+            if (isVisible) visibleNodeIds.add(d.id);
+            return !isVisible;
         });
-        link.style('display', d => {
-            // Re-evaluate visibility based on nodes
-            const s = d.source; const t = d.target;
-            const sVis = (s.label.toLowerCase().includes(term) || (s.tags && s.tags.some(tag => tag.toLowerCase().includes(term)))) && (type === 'all' || s.type === type);
-            const tVis = (t.label.toLowerCase().includes(term) || (t.tags && t.tags.some(tag => tag.toLowerCase().includes(term)))) && (type === 'all' || t.type === type);
-            // Simplification: if both nodes are visible, show link
-            // Actual logic needs to track computed visibility from above, but this is close enough for now
-            return "block"; 
+
+        // Second pass: dim links if either endpoint is dimmed
+        link.classed("link-dimmed", d => {
+            const sourceVisible = visibleNodeIds.has(d.source.id);
+            const targetVisible = visibleNodeIds.has(d.target.id);
+            return !(sourceVisible && targetVisible);
         });
     }
     searchInput.addEventListener('input', filterUpdate);
@@ -366,50 +396,71 @@ async function init() {
         { label: "Cybernetics", type: "field", description: "The science of communications and automatic control systems in both machines and living things.", tags: ["control", "systems"] },
         { label: "Zero-Sum Game", type: "concept", description: "A situation in which one person's gain is equivalent to another's loss.", tags: ["game-theory"] },
         { label: "Neural Network", type: "tool", description: "Computing systems inspired by the biological neural networks that constitute animal brains.", tags: ["ai", "ml"] },
-        { label: "Hyperstition", type: "concept", description: "Fictions that make themselves real.", tags: ["philosophy", "meme"] }
+        { label: "Hyperstition", type: "concept", description: "Fictions that make themselves real.", tags: ["philosophy", "meme"] },
+        { label: "Ergodicity", type: "concept", description: "The property where the average of a process over time is the same as the average over the ensemble.", tags: ["statistics", "risk"] },
+        { label: "Symbiosis", type: "process", description: "Interaction between two different organisms living in close physical association.", tags: ["biology", "cooperation"] },
+        { label: "Metacognition", type: "process", description: "Awareness and understanding of one's own thought processes.", tags: ["psychology", "thinking"] },
+        { label: "Heuristic", type: "tool", description: "A problem-solving approach that employs a practical method not guaranteed to be optimal.", tags: ["problem-solving"] },
+        { label: "Fractal", type: "concept", description: "A curve or geometric figure, each part of which has the same statistical character as the whole.", tags: ["math", "chaos"] },
+        { label: "Meme", type: "entity", description: "an element of a culture or system of behavior that may be considered to be passed from one individual to another.", tags: ["culture", "information"] },
+        { label: "Game Theory", type: "field", description: "The study of mathematical models of strategic interaction among rational decision-makers.", tags: ["math", "strategy"] }
     ];
 
     function spawnNode() {
-        if (nodes.length > 150) return; 
+        if (nodes.length > 200) return; // Cap growth
 
-        const sourceNode = nodes[Math.floor(Math.random() * nodes.length)];
+        // Prefer connecting to high-degree nodes (Hubs) or randomly
+        const hubs = nodes.filter(n => n.degree > 3);
+        const sourceNode = (hubs.length > 0 && Math.random() > 0.3) 
+            ? hubs[Math.floor(Math.random() * hubs.length)] 
+            : nodes[Math.floor(Math.random() * nodes.length)];
+            
         const newId = Date.now().toString();
         let newNodeData;
         
-        if (Math.random() < 0.5 && latentConcepts.length > 0) {
+        if (Math.random() < 0.6 && latentConcepts.length > 0) {
+            // Discovery from latent space
             const index = Math.floor(Math.random() * latentConcepts.length);
             const concept = latentConcepts.splice(index, 1)[0];
             newNodeData = {
                 ...concept,
                 id: newId,
-                description: concept.description + ` (Discovered via ${sourceNode.label})`
+                status: "emerging",
+                description: concept.description,
+                birthTime: Date.now()
             };
         } else {
+            // Procedural generation
             const types = ['concept', 'entity', 'project', 'tool', 'field', 'process'];
             const newType = types[Math.floor(Math.random() * types.length)];
-            const prefixes = ["Advanced", "Core", "Meta", "Sub", "Future", "Applied", "Neo", "Hyper", "Dynamic", "Strategic", "Recursive"];
-            const suffixes = ["Loop", "Module", "Layer", "Nexus", "Vector", "State", "Agent", "Protocol", "System", "Flow"];
+            const prefixes = ["Advanced", "Core", "Meta", "Sub", "Future", "Applied", "Neo", "Hyper", "Dynamic", "Strategic", "Recursive", "Liquid", "Smart"];
+            const suffixes = ["Loop", "Module", "Layer", "Nexus", "Vector", "State", "Agent", "Protocol", "System", "Flow", "Engine", "Matrix"];
+            
             let label;
-            if (Math.random() > 0.5) {
-                 label = `Sub-${sourceNode.label.split(" ").pop()}`;
+            if (sourceNode.label.includes(" ")) {
+                 const base = sourceNode.label.split(" ").pop();
+                 label = `Sub-${base}`;
             } else {
                  const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
-                 const base = suffixes[Math.floor(Math.random() * suffixes.length)];
-                 label = `${prefix} ${base}`;
+                 const suffix = suffixes[Math.floor(Math.random() * suffixes.length)];
+                 label = `${prefix} ${suffix}`;
             }
+            
             newNodeData = {
                 id: newId,
                 label: label,
                 type: newType,
-                description: `Spontaneously emerged node. Connected to ${sourceNode.label}.`,
-                tags: ["generated", "simulation"]
+                description: `Spontaneously emerged node via connection to ${sourceNode.label}.`,
+                tags: ["generated", "simulation"],
+                status: "generated",
+                birthTime: Date.now()
             };
         }
 
         const newNode = {
             ...newNodeData,
-            x: sourceNode.x + (Math.random() - 0.5) * 50,
-            y: sourceNode.y + (Math.random() - 0.5) * 50,
+            x: sourceNode.x + (Math.random() - 0.5) * 80,
+            y: sourceNode.y + (Math.random() - 0.5) * 80,
             degree: 1
         };
 
@@ -417,29 +468,42 @@ async function init() {
         nodes.push(newNode);
         links.push({ source: newId, target: sourceNode.id });
 
-        if (Math.random() > 0.7 && nodes.length > 2) {
-            let otherNode = nodes[Math.floor(Math.random() * nodes.length)];
-            let safeGuard = 0;
-            while ((otherNode.id === newNode.id || otherNode.id === sourceNode.id) && safeGuard < 10) {
-                otherNode = nodes[Math.floor(Math.random() * nodes.length)];
-                safeGuard++;
-            }
-            links.push({ source: newId, target: otherNode.id });
-            newNode.degree++;
-            otherNode.degree = (otherNode.degree || 0) + 1;
+        // Triangulation: Chance to connect to a neighbor of the source (clustering)
+        if (Math.random() > 0.6) {
+             const existingLinks = links.filter(l => l.source.id === sourceNode.id || l.target.id === sourceNode.id);
+             if (existingLinks.length > 0) {
+                 const randomLink = existingLinks[Math.floor(Math.random() * existingLinks.length)];
+                 const neighborId = (randomLink.source.id === sourceNode.id) ? randomLink.target.id : randomLink.source.id;
+                 if (neighborId !== newId) {
+                     links.push({ source: newId, target: neighborId });
+                     newNode.degree++;
+                     const neighbor = nodes.find(n => n.id === neighborId);
+                     if (neighbor) neighbor.degree++;
+                 }
+             }
         }
 
         restart();
-        filterUpdate(); 
+        filterUpdate(); // Ensure new node respects current filters
+        
+        // Visual feedback for new node (flash)
+        const newDomNode = nodeGroup.selectAll("g").filter(d => d.id === newId);
+        newDomNode.select("circle")
+            .attr("stroke", "#fff")
+            .attr("stroke-width", 10)
+            .transition().duration(1000)
+            .attr("stroke", getTypeColor(newNodeData.type))
+            .attr("stroke-width", 2);
     }
 
     growthBtn.addEventListener('click', spawnNode);
     
+    // Slower, steadier autonomous growth
     setInterval(() => {
-        if (nodes.length < 35) {
+        if (nodes.length < 50) {
             spawnNode();
         }
-    }, 12000); 
+    }, 8000); 
 
     restart();
 }

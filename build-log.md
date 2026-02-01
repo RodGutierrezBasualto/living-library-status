@@ -42,3 +42,9 @@
     - **Latent Space:** Expanded the "Simulate Growth" concept pool with advanced nodes (Strange Loop, Hyperstition, Autopoiesis, Neural Network).
     - **UX/Control:** Added a "Reset View" (⟲) button to instantly recenter the graph and clear filters.
     - **Stability:** Refined hover interactions and locked graph view reset to a dedicated button for better control.
+- 2026-02-01 12:00 UTC: [SPRINT 2.4 PHASE 2 REFINEMENT]
+    - **Interactive Semantics:** Info Panel tags are now interactive; clicking a tag (e.g., #complexity) instantly filters the graph to show related nodes.
+    - **Temporal Context:** Added "Created" timestamp to the Info Panel for dynamically generated nodes, grounding the simulation in time.
+    - **Latent Space v2:** Added 7 new deep concepts to the simulation pool: Ergodicity, Symbiosis, Metacognition, Heuristic, Fractal, Meme, and Game Theory.
+    - **UX Polish:** Implemented a "Pulse" animation on the "+ Grow" button when the library is small (<30 nodes) to encourage user interaction.
+    - **Mobile Optimizations:** Improved touch targets for tags and verified bottom-sheet behavior.
