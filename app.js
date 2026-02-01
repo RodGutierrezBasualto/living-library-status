@@ -205,7 +205,7 @@ async function init() {
         document.getElementById('panel-title').innerText = d.label;
         document.getElementById('panel-type').innerText = d.type;
         document.getElementById('panel-desc').innerText = d.description || "No description available.";
-        document.getElementById('panel-id').innerText = d.id;
+        document.getElementById('panel-id').innerText = `ID: ${d.id} | Deg: ${d.degree}`;
         document.getElementById('panel-type').style.color = getTypeColor(d.type);
         document.getElementById('panel-type').style.borderColor = getTypeColor(d.type);
 
@@ -223,23 +223,28 @@ async function init() {
         } else {
             connectedNodes.forEach(n => {
                 const li = document.createElement('li');
-                li.innerText = `${n.label} (${n.type})`;
-                li.style.color = getTypeColor(n.type);
-                li.style.cursor = 'pointer';
-                li.style.textDecoration = 'underline';
-                li.onclick = () => {
+                // Create a clickable span for the label
+                const span = document.createElement('span');
+                span.innerText = `${n.label} (${n.type})`;
+                span.style.color = getTypeColor(n.type);
+                span.style.cursor = 'pointer';
+                span.style.textDecoration = 'underline';
+                
+                span.onclick = (e) => {
+                    e.stopPropagation();
                     // Navigate to node
                     const nodeData = nodes.find(node => node.id === n.id);
                     if (nodeData) {
                         showInfo(nodeData);
                         highlight(nodeData, true);
-                        // Center Logic (Basic)
+                        // Center Logic
                         svg.transition().duration(750).call(
                             d3.zoom().transform,
                             d3.zoomIdentity.translate(width/2 - nodeData.x, height/2 - nodeData.y).scale(1)
                         );
                     }
                 };
+                li.appendChild(span);
                 list.appendChild(li);
             });
         }
@@ -293,28 +298,36 @@ async function init() {
     filterSelect.addEventListener('change', filterUpdate);
 
     // --- Feature: Simulate Growth ---
-    growthBtn.addEventListener('click', () => {
-        if (nodes.length === 0) return;
+    function spawnNode() {
+        if (nodes.length > 100) return; // Cap auto-growth
 
         const sourceNode = nodes[Math.floor(Math.random() * nodes.length)];
         const newId = Date.now().toString();
 
-        // Generate context-aware metadata
-        const types = ['concept', 'entity', 'project', 'tool', 'field'];
+        // Expanded vocabulary for procedural generation
+        const types = ['concept', 'entity', 'project', 'tool', 'field', 'process'];
         const newType = types[Math.floor(Math.random() * types.length)];
         
-        const prefixes = ["Advanced", "Core", "Meta", "Sub", "Future", "Applied", "Neo", "Hyper"];
-        const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
-        const label = `${prefix} ${sourceNode.label.split(" ").pop()}`;
+        const prefixes = ["Advanced", "Core", "Meta", "Sub", "Future", "Applied", "Neo", "Hyper", "Dynamic", "Strategic", "Recursive"];
+        const suffixes = ["Loop", "Module", "Layer", "Nexus", "Vector", "State", "Agent", "Protocol"];
+        
+        // 50% chance to use Source Node's label, 50% chance to generate a new abstract term
+        let label;
+        if (Math.random() > 0.5) {
+             label = `${prefix} ${sourceNode.label.split(" ").pop()}`;
+        } else {
+             const base = suffixes[Math.floor(Math.random() * suffixes.length)];
+             label = `${prefix} ${base}`;
+        }
 
         const newNode = {
             id: newId,
             label: label,
             type: newType,
-            description: `Auto-evolved node derived from ${sourceNode.label}. Represents a ${newType} extension of the core graph.`,
+            description: `Spontaneously emerged node. Connected to ${sourceNode.label}. Represents a new ${newType} vector in the system.`,
             x: sourceNode.x + (Math.random() - 0.5) * 50,
             y: sourceNode.y + (Math.random() - 0.5) * 50,
-            degree: 1 // Start with 1
+            degree: 1
         };
 
         // Increment degree of source
@@ -326,8 +339,11 @@ async function init() {
         // 30% chance to add a second connection
         if (Math.random() > 0.7 && nodes.length > 2) {
             let otherNode = nodes[Math.floor(Math.random() * nodes.length)];
-            while (otherNode.id === newNode.id || otherNode.id === sourceNode.id) {
+            // Avoid self-loops and duplicate edges (basic check)
+            let safeGuard = 0;
+            while ((otherNode.id === newNode.id || otherNode.id === sourceNode.id) && safeGuard < 10) {
                 otherNode = nodes[Math.floor(Math.random() * nodes.length)];
+                safeGuard++;
             }
             links.push({ source: newId, target: otherNode.id });
             newNode.degree++;
@@ -336,7 +352,18 @@ async function init() {
 
         restart();
         filterUpdate(); 
-    });
+        
+        // Flash message or visual cue could go here
+    }
+
+    growthBtn.addEventListener('click', spawnNode);
+    
+    // Auto-grow slowly if graph is small (Simulate "Life")
+    setInterval(() => {
+        if (nodes.length < 30) {
+            spawnNode();
+        }
+    }, 15000); // Every 15 seconds
 
     // Start
     restart();

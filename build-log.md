@@ -25,3 +25,9 @@
     - **Sizing:** Nodes now dynamically size based on their degree (connection count), highlighting hubs visually.
     - **Navigation:** Added smooth pan-and-zoom centering when clicking connections in the Info Panel.
     - **UX:** Added click-away to close the Info Panel.
+- 2026-02-01 10:20 UTC: [SPRINT 2.1 CONTINUATION]
+    - **UX/Visuals:** Added a visual legend for node types (bottom-left).
+    - **Mobile:** Fixed touch scrolling interference by adding `touch-action: none` to the graph container.
+    - **Simulation:** Implemented "Auto-Growth" (background tick) to simulate life; improved procedural naming (prefixes/suffixes) for new nodes.
+    - **Info Panel:** Enhanced details (ID, Degree) and navigation (clickable spans).
+

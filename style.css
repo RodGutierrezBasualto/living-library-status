@@ -131,9 +131,41 @@ h1 {
     width: 100%;
     height: 100%;
     cursor: grab;
+    touch-action: none; /* Prevent browser scrolling while dragging nodes */
 }
 #graph-container:active {
     cursor: grabbing;
+}
+
+#legend {
+    position: absolute;
+    bottom: 1rem;
+    left: 1rem;
+    background: rgba(10, 10, 15, 0.8);
+    padding: 0.8rem;
+    border-radius: 8px;
+    border: 1px solid #333;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    pointer-events: none;
+    z-index: 50;
+    backdrop-filter: blur(4px);
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: #ccc;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
 }
 
 #info-panel {
@@ -257,6 +289,16 @@ h1 {
         display: none;
     }
     
+    #legend {
+        bottom: 1rem;
+        left: 1rem;
+        right: auto;
+        padding: 0.5rem;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.3rem 1rem;
+    }
+
     #info-panel {
         top: auto;
         bottom: 0;
