@@ -1,8 +1,27 @@
 {
-  "nodes": [],
-  "edges": [],
+  "nodes": [
+    { "id": "1", "label": "Nash Equilibrium", "type": "concept", "description": "A stable state of a system involving the interaction of different participants, in which no participant can gain by a unilateral change of strategy if the strategies of the others remain unchanged." },
+    { "id": "2", "label": "Game Theory", "type": "field", "description": "The study of mathematical models of strategic interaction among rational decision-makers." },
+    { "id": "3", "label": "Symbiosis", "type": "concept", "description": "Interaction between two different organisms living in close physical association, typically to the advantage of both." },
+    { "id": "4", "label": "Recursion", "type": "concept", "description": "The repeated application of a recursive procedure or definition." },
+    { "id": "5", "label": "Living Library", "type": "project", "description": "A dynamic, evolving visualization of knowledge nodes and their interconnections." },
+    { "id": "6", "label": "Rod", "type": "entity", "description": "The Reference. Provides constraints and moral compass." },
+    { "id": "7", "label": "Nash", "type": "entity", "description": "The Engine. Provides scale, synthesis, and digital reach." },
+    { "id": "8", "label": "D3.js", "type": "tool", "description": "JavaScript library for manipulating documents based on data." }
+  ],
+  "edges": [
+    { "source": "1", "target": "2" },
+    { "source": "1", "target": "7" },
+    { "source": "3", "target": "6" },
+    { "source": "3", "target": "7" },
+    { "source": "6", "target": "7" },
+    { "source": "5", "target": "7" },
+    { "source": "5", "target": "6" },
+    { "source": "5", "target": "8" },
+    { "source": "4", "target": "7" }
+  ],
   "meta": {
-    "initialized": "2026-02-01T02:00:00Z",
-    "version": 1
+    "lastUpdated": "2026-02-01T09:25:00Z",
+    "version": 2
   }
 }

@@ -1,0 +1,174 @@
+:root {
+    --bg-color: #0a0a0f;
+    --text-color: #e0e0e0;
+    --panel-bg: #1a1a20;
+    --accent: #00ff9d;
+    --accent-dim: #00ff9d40;
+    --edge-color: #333;
+    --node-fill: #2a2a35;
+    --node-stroke: #4a4a55;
+}
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg-color);
+    color: var(--text-color);
+    overflow: hidden;
+}
+
+#app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+header {
+    padding: 1rem;
+    background: rgba(10, 10, 15, 0.9);
+    border-bottom: 1px solid #333;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 10;
+}
+
+h1 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--accent);
+}
+
+.controls {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+#search {
+    background: #222;
+    border: 1px solid #444;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    outline: none;
+}
+
+#search:focus {
+    border-color: var(--accent);
+}
+
+.stats {
+    font-size: 0.8rem;
+    color: #888;
+}
+
+main {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+}
+
+#graph-container {
+    width: 100%;
+    height: 100%;
+}
+
+#info-panel {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 300px;
+    background: var(--panel-bg);
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    border: 1px solid #333;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+#info-panel.hidden {
+    transform: translateX(120%);
+    opacity: 0;
+    pointer-events: none;
+}
+
+#close-panel {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: none;
+    border: none;
+    color: #888;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+#close-panel:hover {
+    color: white;
+}
+
+#panel-title {
+    margin-top: 0;
+    color: var(--accent);
+}
+
+.badge {
+    display: inline-block;
+    background: #333;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    color: #aaa;
+}
+
+#panel-desc {
+    line-height: 1.5;
+    color: #ccc;
+}
+
+.panel-meta {
+    margin-top: 2rem;
+    border-top: 1px solid #333;
+    padding-top: 1rem;
+    color: #666;
+}
+
+/* Mobile Tweaks */
+@media (max-width: 600px) {
+    header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .controls {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    #search {
+        width: 100%;
+    }
+    
+    #info-panel {
+        top: auto;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        width: auto;
+        border-radius: 12px 12px 0 0;
+        border-bottom: none;
+        transform: translateY(0);
+    }
+    
+    #info-panel.hidden {
+        transform: translateY(100%);
+    }
+}

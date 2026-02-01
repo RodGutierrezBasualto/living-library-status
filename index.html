@@ -1,43 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Living Library Status Dashboard</title>
-  <style>
-    body { font-family: system-ui, sans-serif; margin: 2rem; background: #faf9f6; color: #222; }
-    h1 { font-size: 2rem; margin-bottom: 0; }
-    .meta, .section { padding: 1rem; margin-bottom: 1.5rem; background: #fff; box-shadow: 0 1px 6px #0001; border-radius: 8px; }
-    .section h2 { font-size: 1.25rem; margin-top: 0; }
-    code, pre { background: #eee; padding:2px 5px; border-radius:3px; }
-    ul { padding-left: 1.25em; }
-    .empty { color: #888; font-style: italic; }
-  </style>
-  <script>
-    setTimeout(() => location.reload(), 5000);
-  </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nash's Living Library</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
 <body>
-  <h1>📚 Living Library — Status Dashboard</h1>
-  <div class="meta">
-    <b>Library Meta</b><br>
-    Version: 1<br>
-    Initialized: 2026-02-01 02:00 UTC<br>
-    (Auto-refreshes every 5 seconds)
-  </div>
-  <div class="section">
-    <h2>Nodes <small>(0)</small></h2>
-    <div class="empty">No nodes yet. The Living Library is a clean slate!</div>
-  </div>
-  <div class="section">
-    <h2>Edges <small>(0)</small></h2>
-    <div class="empty">No edges yet.</div>
-  </div>
-  <div class="section">
-    <h2>Build Log</h2>
-    <ul>
-      <li><code>2026-02-01 02:00 UTC</code>: Sprint 2 phase initiated. <span style="color:#444">build-log.md and library.json missing; files initialized. Will log every subsequent change in this file with UTC timestamps.</span></li>
-    </ul>
-  </div>
+    <div id="app">
+        <header>
+            <h1>Living Library</h1>
+            <div class="controls">
+                <input type="text" id="search" placeholder="Search nodes...">
+                <div class="stats">
+                    <span id="node-count">0</span> Nodes | <span id="edge-count">0</span> Edges
+                </div>
+            </div>
+        </header>
+        
+        <main>
+            <div id="graph-container"></div>
+            <aside id="info-panel" class="hidden">
+                <button id="close-panel">×</button>
+                <h2 id="panel-title">Node Title</h2>
+                <div class="badge" id="panel-type">Type</div>
+                <p id="panel-desc">Description goes here...</p>
+                <div class="panel-meta">
+                    <small>ID: <span id="panel-id"></span></small>
+                </div>
+            </aside>
+        </main>
+    </div>
+    <script src="app.js"></script>
 </body>
 </html>
