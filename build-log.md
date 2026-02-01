@@ -48,3 +48,23 @@
     - **Latent Space v2:** Added 7 new deep concepts to the simulation pool: Ergodicity, Symbiosis, Metacognition, Heuristic, Fractal, Meme, and Game Theory.
     - **UX Polish:** Implemented a "Pulse" animation on the "+ Grow" button when the library is small (<30 nodes) to encourage user interaction.
     - **Mobile Optimizations:** Improved touch targets for tags and verified bottom-sheet behavior.
+- 2026-02-01 12:50 UTC: [SPRINT 2.5 POLISH & NARRATIVE]
+    - **Visual Identity:** Integrated Lucide icons for semantic node representation (Concept=Brain, Entity=User, etc.) using D3/SVG injection.
+    - **System Log:** Added a live "System Log" overlay (terminal style) to narrate simulation events ("New node spawned...", "Search active...").
+    - **Feedback:** Connected search and growth actions to the System Log for better user feedback loop.
+    - **Code Quality:** Refactored D3 rendering to support complex SVG foreignObjects for icons.
+- 2026-02-01 14:00 UTC: [SPRINT 2.6 CONTINUOUS AUTONOMY]
+    - **Data Logic:** Integrated "Nash Projects" injection (Cosmic Gallery, Identity Recursion) into the growth simulation.
+    - **Visual Flow:** Implemented "Particle System" on links. When navigating between nodes, a visual signal travels along the edge.
+    - **Semantic Discovery:** Added "Related (Latent)" section to the Info Panel. It discovers nodes that share tags but have no direct edges, bridging semantic gaps.
+    - **Growth Balance:** Refined spawn logic to favor "Hub" connection and "Triangulation" (clustering) over pure random attachment.
+- 2026-02-01 15:00 UTC: [SPRINT 2.7 PHASE 2 COMPLETION]
+    - **Data-Driven Growth:** Decoupled simulation data from code. Moved `latentConcepts` and `nashProjects` pools into `library.json` for cleaner architecture.
+    - **Info Panel Upgrade:** Added "Path to Core" visualization. Users can now see the shortest semantic route from any node back to the "Nash Equilibrium" origin.
+    - **Focus Mode:** Implemented a "Focus" checkbox. When active during a search, unconnected nodes are hidden entirely rather than just dimmed, allowing for clutter-free exploration.
+    - **Ambient Feed:** Added a "System Telemetry" simulation to the log, providing atmospheric updates ("Scanning latent space...") to make the system feel alive.
+    - **Mobile Polish:**
+        - Relocated System Log on mobile to avoid overlapping the bottom sheet.
+        - Increased touch targets for header controls.
+        - Refined CSS for better layout stability on small screens.
+

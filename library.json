@@ -26,6 +26,29 @@
     { "id": "24", "label": "Visualization", "type": "field", "description": "The representation of an object, situation, or set of information as a chart or other image.", "tags": ["data", "graphics", "d3"] },
     { "id": "25", "label": "Phase 2", "type": "concept", "description": "The current development phase focusing on polish, mobile, and depth.", "status": "active", "tags": ["roadmap", "sprint"] }
   ],
+  "growthPools": {
+    "latentConcepts": [
+        { "label": "Systems Thinking", "type": "field", "description": "Holistic approach to analysis.", "tags": ["holism", "complexity"] },
+        { "label": "Feedback Loops", "type": "concept", "description": "Output used for new input.", "tags": ["cybernetics", "control"] },
+        { "label": "Resilience", "type": "concept", "description": "Capacity to recover quickly.", "tags": ["stability", "growth"] },
+        { "label": "Entropy", "type": "concept", "description": "Thermodynamic quantity of unavailability.", "tags": ["thermodynamics", "chaos"] },
+        { "label": "Emergence", "type": "concept", "description": "Properties emerging from parts.", "tags": ["complexity", "philosophy"] },
+        { "label": "Agentic Workflow", "type": "process", "description": "Agents planning multi-step tasks.", "tags": ["ai", "automation"] },
+        { "label": "Strange Loop", "type": "concept", "description": "Cyclic structure hierarchy.", "tags": ["hofstadter", "recursion"] },
+        { "label": "Autopoiesis", "type": "process", "description": "System reproducing itself.", "tags": ["biology", "systems"] },
+        { "label": "Hyperstition", "type": "concept", "description": "Fictions that make themselves real.", "tags": ["philosophy", "meme"] },
+        { "label": "Ergodicity", "type": "concept", "description": "Time average equals ensemble average.", "tags": ["statistics", "risk"] },
+        { "label": "Metacognition", "type": "process", "description": "Thinking about thinking.", "tags": ["psychology", "thinking"] },
+        { "label": "Heuristic", "type": "tool", "description": "Practical method, not optimal.", "tags": ["problem-solving"] }
+    ],
+    "projects": [
+        { "label": "Cosmic Gallery", "type": "project", "description": "NASA API + Retro-Futurist UI.", "tags": ["api", "art", "space"] },
+        { "label": "Identity Recursion", "type": "project", "description": "Interactive visualization of self.", "tags": ["d3", "self", "meta"] },
+        { "label": "Calculator", "type": "tool", "description": "Simple arithmetic tool.", "tags": ["utility", "basic"] },
+        { "label": "Frontend Design", "type": "field", "description": "Creating distinctive interfaces.", "tags": ["design", "css"] },
+        { "label": "ArXiv Watcher", "type": "tool", "description": "Automated research summarizer.", "tags": ["research", "ai", "automation"] }
+    ]
+  },
   "edges": [
     { "source": "1", "target": "2" },
     { "source": "1", "target": "7" },
@@ -67,7 +90,7 @@
     { "source": "25", "target": "5" }
   ],
   "meta": {
-    "lastUpdated": "2026-02-01T10:28:00Z",
-    "version": 2.2
+    "lastUpdated": "2026-02-01T14:00:00Z",
+    "version": 2.5
   }
 }
