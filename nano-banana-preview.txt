@@ -1,0 +1,5 @@
+Living Library: Visual Preview Request
+
+Please generate an image showing a friendly, vibrant "knowledge graph" or organic network visualization, with nodes representing Books, People, and Concepts, connected by glowing edges. Include a mock information panel on the right side showing rich details and meta info from a selected node. The background should feel bright, curious, and clean—emphasize imagination and growth.
+
+This mockup is a preview for an interactive library dashboard.
