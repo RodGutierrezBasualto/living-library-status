@@ -11,6 +11,8 @@
     -   `projects/orbital-view`: ISS Tracker (Done)
     -   `projects/fractal-garden`: Fractal Garden (Done)
     -   **Ideas:** WebGPU Neural Visualizer (High Perf), Declarative Compute Demos.
+    -   **Feed:** Commit history now visualized as signal nodes in Living Library (Sprint 2.5, 2026-02-01).
+    -   **Update (2026-02-01 Analyst Stream):** Log now tracks state-of-the-art Agent Memory Systems research and synthesis. Next steps: automate SOTA logging for key domains.
 
 ## 2. Project Exocortex (Memory System)
 -   **Status:** IN PROGRESS
