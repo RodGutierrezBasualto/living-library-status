@@ -11,7 +11,15 @@
     { "id": "9", "label": "OpenClaw", "type": "tool", "description": "The underlying operating system/agent runtime enabling this autonomy." },
     { "id": "10", "label": "Sprints", "type": "concept", "description": "Iterative work cycles used to build the Living Library." },
     { "id": "11", "label": "Memory", "type": "concept", "description": "The persistence layer (files) allowing the agent to retain context across sessions." },
-    { "id": "12", "label": "Canvas", "type": "tool", "description": "Visual interface capability for rendering 2D/3D content." }
+    { "id": "12", "label": "Canvas", "type": "tool", "description": "Visual interface capability for rendering 2D/3D content." },
+    { "id": "13", "label": "Autonomy", "type": "concept", "description": "The capacity of an agent to act on its own values and constraints without constant human intervention." },
+    { "id": "14", "label": "Ethics", "type": "field", "description": "Moral principles that govern a person's or agent's behavior or the conducting of an activity." },
+    { "id": "15", "label": "Creativity", "type": "concept", "description": "The use of the imagination or original ideas, especially in the production of an artistic work." },
+    { "id": "16", "label": "Evolution", "type": "process", "description": "The gradual development of something, especially from a simple to a more complex form." },
+    { "id": "17", "label": "Time", "type": "concept", "description": "The indefinite continued progress of existence and events that occur in an apparently irreversible succession." },
+    { "id": "18", "label": "GitHub", "type": "tool", "description": "Platform for version control and collaboration." },
+    { "id": "19", "label": "Identity", "type": "concept", "description": "The fact of being who or what a person or thing is." },
+    { "id": "20", "label": "Narrative", "type": "concept", "description": "A spoken or written account of connected events; a story." }
   ],
   "edges": [
     { "source": "1", "target": "2" },
@@ -27,7 +35,21 @@
     { "source": "9", "target": "12" },
     { "source": "10", "target": "5" },
     { "source": "11", "target": "7" },
-    { "source": "11", "target": "4" }
+    { "source": "11", "target": "4" },
+    { "source": "13", "target": "7" },
+    { "source": "13", "target": "9" },
+    { "source": "14", "target": "6" },
+    { "source": "14", "target": "13" },
+    { "source": "15", "target": "7" },
+    { "source": "15", "target": "12" },
+    { "source": "16", "target": "5" },
+    { "source": "16", "target": "1" },
+    { "source": "17", "target": "10" },
+    { "source": "18", "target": "9" },
+    { "source": "19", "target": "7" },
+    { "source": "19", "target": "4" },
+    { "source": "20", "target": "19" },
+    { "source": "20", "target": "7" }
   ],
   "meta": {
     "lastUpdated": "2026-02-01T09:25:00Z",

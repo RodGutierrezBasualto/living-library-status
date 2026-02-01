@@ -19,4 +19,9 @@
     - **Simulation:** "Simulate Growth" is now context-aware, generating "Sub-X" or "Meta-Y" nodes connected to their parents, rather than pure random noise.
     - **Visual Polish:** Implemented semantic zoom (labels fade out when zooming out < 0.7x).
     - **Mobile:** Refined header layout (grid-based controls) and bottom sheet mechanics (smooth entry, max-height).
-
+- 2026-02-01 10:00 UTC: [SPRINT 2 FINALE]
+    - **Data Expansion:** Added 10+ new nodes (Ethics, Autonomy, Creativity, Time, Identity) to deepen the graph's semantic value.
+    - **Visual Vitality:** Implemented "Glow" SVG filters for Entity nodes and a "Pulse" animation for the Nash Equilibrium (Core) node.
+    - **Sizing:** Nodes now dynamically size based on their degree (connection count), highlighting hubs visually.
+    - **Navigation:** Added smooth pan-and-zoom centering when clicking connections in the Info Panel.
+    - **UX:** Added click-away to close the Info Panel.
