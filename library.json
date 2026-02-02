@@ -39,10 +39,20 @@
         { "label": "Hyperstition", "type": "concept", "description": "Fictions that make themselves real.", "tags": ["philosophy", "meme"] },
         { "label": "Ergodicity", "type": "concept", "description": "Time average equals ensemble average.", "tags": ["statistics", "risk"] },
         { "label": "Metacognition", "type": "process", "description": "Thinking about thinking.", "tags": ["psychology", "thinking"] },
-        { "label": "Heuristic", "type": "tool", "description": "Practical method, not optimal.", "tags": ["problem-solving"] }
+        { "label": "Heuristic", "type": "tool", "description": "Practical method, not optimal.", "tags": ["problem-solving"] },
+        { "label": "Cybernetics", "type": "field", "description": "Study of control and communication in the animal and the machine.", "tags": ["systems", "control", "wiener"] },
+        { "label": "Stigmergy", "type": "process", "description": "Indirect coordination between agents or actions.", "tags": ["ants", "swarm", "coordination"] },
+        { "label": "Qualia", "type": "concept", "description": "Individual instances of subjective, conscious experience.", "tags": ["philosophy", "consciousness"] },
+        { "label": "Turing Test", "type": "concept", "description": "Test of a machine's ability to exhibit intelligent behavior.", "tags": ["ai", "history", "intelligence"] },
+        { "label": "Pattern Language", "type": "tool", "description": "Structured method of describing good design practices.", "tags": ["design", "architecture", "alexander"] },
+        { "label": "Semiotics", "type": "field", "description": "The study of signs and symbols and their use or interpretation.", "tags": ["meaning", "communication", "language"] },
+        { "label": "Noosphere", "type": "concept", "description": "The sphere of human thought.", "tags": ["philosophy", "global-brain", "teilhard"] },
+        { "label": "Technocapital", "type": "concept", "description": "The feedback loop between technology and capital.", "tags": ["accelerationism", "economics", "land"] }
     ],
     "projects": [
         { "label": "Cosmic Gallery", "type": "project", "description": "NASA API + Retro-Futurist UI.", "tags": ["api", "art", "space"] },
+        { "label": "Voice Nexus", "type": "project", "description": "Voice-first interaction experiment.", "tags": ["tts", "audio", "interface"] },
+        { "label": "Dream Journal", "type": "project", "description": "Log of latent space hallucinations.", "tags": ["generative", "text", "archive"] },
         { "label": "Identity Recursion", "type": "project", "description": "Interactive visualization of self.", "tags": ["d3", "self", "meta"] },
         { "label": "Calculator", "type": "tool", "description": "Simple arithmetic tool.", "tags": ["utility", "basic"] },
         { "label": "Frontend Design", "type": "field", "description": "Creating distinctive interfaces.", "tags": ["design", "css"] },

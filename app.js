@@ -125,7 +125,6 @@ async function init() {
             .on("click", (event, d) => {
                 event.stopPropagation();
                 showInfo(d);
-                highlight(d, true);
                 log(`Inspecting: ${d.label}`);
             });
 
@@ -280,8 +279,9 @@ async function init() {
             return null;
         }
 
+        let path = null;
         if (d.id !== "1") {
-            const path = getShortestPath(d.id, "1");
+            path = getShortestPath(d.id, "1");
             if (path && path.length > 1) {
                  metaHTML += `<div style="margin-top:0.5rem; padding:4px; border-left:2px solid #555; background:rgba(255,255,255,0.05);">
                     <small style="color:#aaa; text-transform:uppercase; font-size:0.7rem;">Path to Core</small><br>
@@ -337,7 +337,6 @@ async function init() {
                 const targetNode = nodes.find(n => n.id === e.target.dataset.id);
                 if (targetNode) {
                     showInfo(targetNode);
-                    highlight(targetNode, true);
                     svg.transition().duration(750).call(zoom.transform, d3.zoomIdentity.translate(width/2 - targetNode.x, height/2 - targetNode.y).scale(1));
                 }
             };
@@ -368,7 +367,6 @@ async function init() {
                         const nodeData = nodes.find(node => node.id === n.id);
                         if (nodeData) {
                             showInfo(nodeData);
-                            highlight(nodeData, true);
                             svg.transition().duration(750).call(zoom.transform, d3.zoomIdentity.translate(width/2 - nodeData.x, height/2 - nodeData.y).scale(1));
                         }
                     }, 500);
@@ -378,6 +376,7 @@ async function init() {
             });
         }
         panel.classList.remove('hidden');
+        highlight(d, true, path);
     }
 
     closeBtn.onclick = () => { panel.classList.add('hidden'); highlight(null, false); };
@@ -385,9 +384,13 @@ async function init() {
         svg.transition().duration(750).call(zoom.transform, d3.zoomIdentity);
         highlight(null, false);
         panel.classList.add('hidden');
+        searchInput.value = ''; // Clear search
+        filterSelect.value = 'all'; // Reset filter
+        focusToggle.checked = false; // Reset focus
+        filterUpdate(); // Apply clear
     };
 
-    function highlight(d, isActive) {
+    function highlight(d, isActive, pathIds = null) {
         if (!isActive) {
             node.attr("opacity", 1);
             link.attr("stroke", "#333").attr("stroke-width", 1.5).attr("stroke-opacity", 0.6);
@@ -399,19 +402,27 @@ async function init() {
             if (l.target.id === d.id) connectedIds.add(l.source.id);
         });
         
+        if (pathIds) pathIds.forEach(id => connectedIds.add(id));
+
         node.attr("opacity", n => {
             if (n.id === d.id || connectedIds.has(n.id)) return 1;
             return 0.1;
         });
         link.attr("stroke", l => {
             const isConnected = (l.source.id === d.id || l.target.id === d.id);
+            // Highlight links in the path
+            const isPathLink = pathIds && pathIds.includes(l.source.id) && pathIds.includes(l.target.id);
+            if (isPathLink) return "#fff";
             return isConnected ? "#fff" : "#333";
         }).attr("stroke-width", l => {
              const isConnected = (l.source.id === d.id || l.target.id === d.id);
+             const isPathLink = pathIds && pathIds.includes(l.source.id) && pathIds.includes(l.target.id);
+             if (isPathLink) return 3;
              return isConnected ? 2 : 1;
         }).attr("stroke-opacity", l => {
              const isConnected = (l.source.id === d.id || l.target.id === d.id);
-             return isConnected ? 1 : 0.05;
+             const isPathLink = pathIds && pathIds.includes(l.source.id) && pathIds.includes(l.target.id);
+             return (isConnected || isPathLink) ? 1 : 0.05;
         });
     }
 
@@ -513,6 +524,9 @@ async function init() {
 
         restart();
         
+        // Visualize data flow
+        setTimeout(() => sendParticle(sourceNode.id, newId), 800);
+
         const newDom = nodeGroup.selectAll("g").filter(d => d.id === newId);
         newDom.select("circle")
             .attr("stroke", "#fff").attr("stroke-width", 10)
