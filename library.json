@@ -47,7 +47,18 @@
         { "label": "Pattern Language", "type": "tool", "description": "Structured method of describing good design practices.", "tags": ["design", "architecture", "alexander"] },
         { "label": "Semiotics", "type": "field", "description": "The study of signs and symbols and their use or interpretation.", "tags": ["meaning", "communication", "language"] },
         { "label": "Noosphere", "type": "concept", "description": "The sphere of human thought.", "tags": ["philosophy", "global-brain", "teilhard"] },
-        { "label": "Technocapital", "type": "concept", "description": "The feedback loop between technology and capital.", "tags": ["accelerationism", "economics", "land"] }
+        { "label": "Technocapital", "type": "concept", "description": "The feedback loop between technology and capital.", "tags": ["accelerationism", "economics", "land"] },
+        { "label": "Axiom", "type": "concept", "description": "A statement or proposition which is regarded as being established, accepted, or self-evidently true.", "tags": ["logic", "math", "truth"] },
+        { "label": "Bricolage", "type": "process", "description": "Construction or creation from a diverse range of available things.", "tags": ["art", "method", "diy"] },
+        { "label": "Gestalt", "type": "concept", "description": "An organized whole that is perceived as more than the sum of its parts.", "tags": ["psychology", "perception"] },
+        { "label": "Memetics", "type": "field", "description": "Study of information and culture based on an analogy with Darwinian evolution.", "tags": ["evolution", "culture", "dawkins"] },
+        { "label": "Panopticon", "type": "concept", "description": "A system of control where the few watch the many.", "tags": ["surveillance", "sociology", "foucault"] },
+        { "label": "Rhizome", "type": "concept", "description": "A continuously growing, horizontal underground stem; a non-hierarchical network.", "tags": ["philosophy", "deleuze", "network"] },
+        { "label": "Simulacra", "type": "concept", "description": "Copies that depict things that either had no original, or that no longer have an original.", "tags": ["philosophy", "baudrillard", "media"] },
+        { "label": "Singularity", "type": "concept", "description": "A hypothetical point in time at which technological growth becomes uncontrollable.", "tags": ["future", "ai", "kurzweil"] },
+        { "label": "Zeitgeist", "type": "concept", "description": "The defining spirit or mood of a particular period of history.", "tags": ["history", "culture"] },
+        { "label": "Entropy", "type": "concept", "description": "A measure of the disorder or randomness in a closed system.", "tags": ["physics", "thermodynamics"] },
+        { "label": "Fractal", "type": "concept", "description": "A curve or geometric figure, each part of which has the same statistical character as the whole.", "tags": ["math", "geometry", "nature"] }
     ],
     "projects": [
         { "label": "Cosmic Gallery", "type": "project", "description": "NASA API + Retro-Futurist UI.", "tags": ["api", "art", "space"] },

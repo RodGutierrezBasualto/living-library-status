@@ -309,15 +309,33 @@ main {
         left: 0;
         width: 100%;
         height: auto;
-        max-height: 70vh;
+        max-height: 80vh;
         border-left: none;
         border-top: 1px solid var(--border);
         border-radius: 16px 16px 0 0;
         transform: translateY(0);
+        padding-top: 2.5rem; /* Space for handle */
+    }
+
+    /* Drag Handle Visual */
+    #info-panel::before {
+        content: '';
+        position: absolute;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 40px;
+        height: 5px;
+        background: #333;
+        border-radius: 10px;
     }
 
     #info-panel.hidden {
         transform: translateY(100%);
+    }
+
+    #close-panel {
+        top: 15px; /* Adjust for handle */
     }
 
     #legend {

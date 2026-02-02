@@ -1,6 +1,9 @@
-- 2026-02-01 20:15 UTC: [SPRINT 2 PHASE 2 RECOVERY & POLISH]
-    - **Critical Fix:** Detected corruption in `style.css` and completely rebuilt it with a comprehensive dark theme, mobile-responsive bottom sheet, and improved layout.
-    - **Data Enrichment:** Injected 10+ new "Latent Concepts" (Cybernetics, Stigmergy, Qualia, Noosphere) and new Projects (Voice Nexus, Dream Journal) into `library.json` to fuel the simulation.
-    - **Visual Logic:** Refactored `showInfo` to centralize highlight logic. Now, selecting a node *visually traces the path back to the Core (Nash Equilibrium)* on the graph itself (thick white lines), not just in the panel.
-    - **UX:** "Reset View" button now properly clears search filters and focus mode.
-    - **Simulation:** Added particle effects to "Growth" events; new nodes now receive a visible data packet from their parent upon creation.
+- 2026-02-02 20:20 UTC: [SPRINT 2 PHASE 2.5 - DATA & UX DEPTH]
+    - **Data Injection:** Added ~20 new "Latent Concepts" (systems thinking, hyperstition, rhizome, simulacra) to prevent generic node labels during growth.
+    - **UX Upgrade:** Added a `{JSON}` toggle in the Info Panel for inspecting raw node data.
+    - **Mobile Polish:** Added a visual "drag handle" to the mobile bottom sheet and increased max-height.
+    - **Simulation Logic:**
+        - "Pulse" from the Core Node now occasionally triggers growth events (80% chance when nodes < 80).
+        - `spawnNode` logic now actively checks for label duplicates to ensure variety.
+        - `spawnNode` preferentially picks from `nashProjects` and `latentConcepts` before falling back to synthesis.
+    - **Code Quality:** Refactored `app.js` to handle dynamic UI updates (like the JSON button) correctly without clearing event listeners.

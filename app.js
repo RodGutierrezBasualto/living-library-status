@@ -68,6 +68,8 @@ async function init() {
     const edgeCountEl = document.getElementById('edge-count');
     const panel = document.getElementById('info-panel');
     const closeBtn = document.getElementById('close-panel');
+    const jsonBtn = document.getElementById('btn-json-toggle');
+    const jsonPre = document.getElementById('panel-json');
     const searchInput = document.getElementById('search');
     const filterSelect = document.getElementById('filter-type');
     const focusToggle = document.getElementById('focus-mode');
@@ -183,7 +185,13 @@ async function init() {
                 .attr("stroke-width", 6).attr("stroke-opacity", 0.5)
                 .transition().duration(2000)
                 .attr("stroke-width", 4).attr("stroke-opacity", 1)
-                .on("end", repeat);
+                .on("end", () => {
+                    // Occasional burst from core
+                    if (Math.random() > 0.8 && nodes.length < 80) {
+                        spawnNode();
+                    }
+                    repeat();
+                });
         }
         repeat();
     }
@@ -323,6 +331,29 @@ async function init() {
         
         metaContainer.innerHTML = metaHTML;
 
+        // JSON Toggle Logic - Re-attach since innerHTML wiped it
+        const newJsonBtn = document.createElement('button');
+        newJsonBtn.id = 'btn-json-toggle';
+        newJsonBtn.style.cssText = "margin-left:auto; float:right; background:none; border:1px solid #333; color:#777; cursor:pointer; font-size:0.6rem; padding:2px 6px; border-radius:4px;";
+        newJsonBtn.innerText = "{JSON}";
+        newJsonBtn.onclick = () => {
+             const pre = document.getElementById('panel-json');
+             if (pre.classList.contains('hidden')) {
+                 pre.classList.remove('hidden');
+                 pre.innerText = JSON.stringify(d, (k,v) => {
+                     if (k==='x' || k==='y' || k==='vx' || k==='vy' || k==='index' || k==='fx' || k==='fy') return undefined;
+                     return v;
+                 }, 2);
+             } else {
+                 pre.classList.add('hidden');
+             }
+        };
+        metaContainer.prepend(newJsonBtn); // Add to top of meta for visibility
+        
+        // Clear previous JSON view state
+        document.getElementById('panel-json').classList.add('hidden');
+        document.getElementById('panel-json').innerText = '';
+
         metaContainer.querySelectorAll('.tag-pill').forEach(tag => {
             tag.onclick = (e) => {
                 e.stopPropagation();
@@ -461,8 +492,8 @@ async function init() {
             return; 
         }
 
-        const hubs = nodes.filter(n => n.degree > 3);
-        const sourceNode = (hubs.length > 0 && Math.random() > 0.4) 
+        const hubs = nodes.filter(n => n.degree > 2); // Lower threshold to find more parents
+        const sourceNode = (hubs.length > 0 && Math.random() > 0.3) 
             ? hubs[Math.floor(Math.random() * hubs.length)] 
             : nodes[Math.floor(Math.random() * nodes.length)];
             
@@ -470,28 +501,55 @@ async function init() {
         let newNodeData;
         const rand = Math.random();
         
-        if (rand < 0.3 && nashProjects.length > 0) {
-            const index = Math.floor(Math.random() * nashProjects.length);
-            const proj = nashProjects.splice(index, 1)[0];
-            newNodeData = { ...proj, id: newId, status: "discovered", birthTime: Date.now() };
-            log(`Archive recovered: ${newNodeData.label}`, "success");
-        } else if (rand < 0.6 && latentConcepts.length > 0) {
-            const index = Math.floor(Math.random() * latentConcepts.length);
-            const concept = latentConcepts.splice(index, 1)[0];
-            newNodeData = { ...concept, id: newId, status: "emerging", birthTime: Date.now() };
-            log(`Latent concept emerging: ${newNodeData.label}`);
-        } else {
+        // Check for existing labels to avoid duplicates
+        const existingLabels = new Set(nodes.map(n => n.label));
+
+        if (rand < 0.35 && nashProjects.length > 0) {
+            // Projects
+            const available = nashProjects.filter(p => !existingLabels.has(p.label));
+            if (available.length > 0) {
+                const index = Math.floor(Math.random() * available.length);
+                const proj = available[index];
+                // Remove from pool roughly (filter doesn't remove, need to find index in original)
+                const realIndex = nashProjects.indexOf(proj);
+                if (realIndex > -1) nashProjects.splice(realIndex, 1);
+                
+                newNodeData = { ...proj, id: newId, status: "discovered", birthTime: Date.now() };
+                log(`Archive recovered: ${newNodeData.label}`, "success");
+            }
+        } 
+        
+        if (!newNodeData && rand < 0.7 && latentConcepts.length > 0) {
+            // Latent Concepts
+            const available = latentConcepts.filter(c => !existingLabels.has(c.label));
+             if (available.length > 0) {
+                const index = Math.floor(Math.random() * available.length);
+                const concept = available[index];
+                const realIndex = latentConcepts.indexOf(concept);
+                if (realIndex > -1) latentConcepts.splice(realIndex, 1);
+
+                newNodeData = { ...concept, id: newId, status: "emerging", birthTime: Date.now() };
+                log(`Latent concept emerging: ${newNodeData.label}`);
+            }
+        }
+        
+        if (!newNodeData) {
+            // Synthesis (Fallback)
             const types = ['concept', 'process', 'tool'];
             const newType = types[Math.floor(Math.random() * types.length)];
-            const prefixes = ["Meta", "Hyper", "Neo", "Core", "Sub", "Dynamic", "Open", "Smart"];
-            const suffixes = ["Flow", "Loop", "Net", "Graph", "Space", "Logic", "Stack"];
+            const prefixes = ["Meta", "Hyper", "Neo", "Core", "Sub", "Dynamic", "Open", "Smart", "Flux", "Nano"];
+            const suffixes = ["Flow", "Loop", "Net", "Graph", "Space", "Logic", "Stack", "Sync", "Mesh", "Mind"];
             
             let label;
-            if (sourceNode.label.split(" ").length > 1) {
-                label = `Sub-${sourceNode.label.split(" ").pop()}`;
-            } else {
-                label = `${prefixes[Math.floor(Math.random()*prefixes.length)]} ${suffixes[Math.floor(Math.random()*suffixes.length)]}`;
-            }
+            let attempts = 0;
+            do {
+                if (sourceNode.label.split(" ").length > 1 && Math.random() > 0.5) {
+                    label = `Sub-${sourceNode.label.split(" ").pop()}`;
+                } else {
+                    label = `${prefixes[Math.floor(Math.random()*prefixes.length)]} ${suffixes[Math.floor(Math.random()*suffixes.length)]}`;
+                }
+                attempts++;
+            } while (existingLabels.has(label) && attempts < 10);
 
             newNodeData = {
                 id: newId,
@@ -505,18 +563,21 @@ async function init() {
             log(`System synthesized: ${label}`);
         }
 
+        const angle = Math.random() * 2 * Math.PI;
+        const dist = 50 + Math.random() * 50;
         const newNode = {
             ...newNodeData,
-            x: sourceNode.x + (Math.random() - 0.5) * 60,
-            y: sourceNode.y + (Math.random() - 0.5) * 60,
+            x: sourceNode.x + Math.cos(angle) * dist,
+            y: sourceNode.y + Math.sin(angle) * dist,
             degree: 1
         };
 
         nodes.push(newNode);
         links.push({ source: newId, target: sourceNode.id });
 
+        // Triangulate occasionally
         const neighborLink = links.find(l => (l.source.id === sourceNode.id || l.target.id === sourceNode.id) && l.source.id !== newId && l.target.id !== newId);
-        if (neighborLink && Math.random() > 0.5) {
+        if (neighborLink && Math.random() > 0.6) {
              const neighborId = (neighborLink.source.id === sourceNode.id) ? neighborLink.target.id : neighborLink.source.id;
              links.push({ source: newId, target: neighborId });
              newNode.degree++;
